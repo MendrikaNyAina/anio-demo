@@ -1,0 +1,338 @@
+@import 'tailwindcss';
+
+/* ── Design tokens (ambiance Notion) ─────────────────────────── */
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Polices des affichages alternatifs de la page Catégories */
+  --font-soft: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-round: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  --font-pixel: 'Silkscreen', ui-monospace, monospace;
+  /* Titres de catégorie façon journal (affichage Notion) */
+  --font-plate: 'Fredoka', ui-rounded, ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #37352f;
+  --color-ink-2: #787774;
+  --color-ink-3: #9b9a97;
+  --color-line: #e9e9e7;
+  --color-hover: #f1f1ef;
+  --color-press: #e8e8e6;
+  --color-sidebar: #f7f7f5;
+  --color-accent: #2383e2;
+  --color-accent-soft: #e8f1fb;
+  --color-danger: #d44c47;
+  --shadow-pop: 0 0 0 1px rgb(15 15 15 / 5%), 0 3px 6px rgb(15 15 15 / 10%), 0 9px 24px rgb(15 15 15 / 20%);
+  --animate-pop: pop 120ms ease-out;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgb(35 131 226 / 20%);
+}
+
+/* Barres de défilement discrètes */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d3d1cb transparent;
+}
+
+/* ── État « fait » des entrées (réglage : terni ou hachuré) ── */
+.entry-done {
+  opacity: 0.45;
+}
+.entry-done .entry-title {
+  text-decoration: line-through;
+}
+.entry-done.done-hatched {
+  opacity: 0.7;
+  background-image: repeating-linear-gradient(135deg, rgb(55 53 47 / 9%) 0 5px, transparent 5px 10px);
+}
+
+@keyframes pending {
+  50% {
+    opacity: 0.5;
+  }
+}
+.entry-pending {
+  animation: pending 1s ease-in-out infinite;
+}
+
+/* ── FullCalendar habillé façon Notion ───────────────────────── */
+.fc {
+  --fc-border-color: var(--color-line);
+  --fc-page-bg-color: #ffffff;
+  --fc-neutral-bg-color: var(--color-sidebar);
+  --fc-today-bg-color: rgb(35 131 226 / 4%);
+  --fc-event-bg-color: transparent;
+  --fc-event-border-color: transparent;
+  --fc-event-text-color: var(--color-ink);
+  --fc-now-indicator-color: #eb5757;
+  --fc-highlight-color: rgb(35 131 226 / 12%);
+  --fc-small-font-size: 12px;
+  font-size: 13px;
+}
+.fc .fc-col-header-cell-cushion {
+  padding: 6px 4px;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--color-ink-2);
+  text-transform: capitalize;
+}
+.fc .fc-timegrid-slot-label-cushion,
+.fc .fc-timegrid-axis-cushion {
+  font-size: 11px;
+  color: var(--color-ink-3);
+}
+.fc .fc-timegrid-slot {
+  height: 2.6em;
+}
+.fc .fc-timegrid-slot-minor {
+  border-top-style: none;
+}
+.fc-theme-standard .fc-scrollgrid {
+  border-left: none;
+  border-right: none;
+}
+.fc .fc-day-today .fc-col-header-cell-cushion {
+  color: var(--color-accent);
+}
+.fc .fc-daygrid-day-top {
+  flex-direction: row;
+}
+.fc .fc-daygrid-day-number {
+  padding: 0;
+}
+.fc .fc-daygrid-day.fc-day-other {
+  background: #fbfbfa;
+}
+.fc .fc-daygrid-event,
+.fc .fc-timegrid-event,
+.fc .fc-h-event,
+.fc .fc-v-event {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.fc .fc-timegrid-event-harness-inset .fc-timegrid-event {
+  box-shadow: 0 0 0 1px #fff;
+}
+.fc .fc-daygrid-event-harness {
+  margin: 1px 4px;
+}
+.fc .fc-event-main {
+  padding: 0;
+  height: 100%;
+}
+.fc .fc-daygrid-more-link,
+.fc .fc-timegrid-more-link {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-ink-2);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+.fc .fc-daygrid-more-link:hover {
+  background: var(--color-hover);
+}
+.fc .fc-popover {
+  border-radius: 8px;
+  box-shadow: var(--shadow-pop);
+  border: none;
+}
+.fc .fc-popover-header {
+  background: var(--color-sidebar);
+  border-radius: 8px 8px 0 0;
+}
+.fc .fc-daygrid-day-number {
+  width: 100%;
+}
+.fc .fc-highlight {
+  border-radius: 4px;
+}
+.fc .fc-timegrid-axis-cushion {
+  text-transform: none;
+}
+.fc-event-mirror {
+  opacity: 0.85;
+}
+.fc .fc-daygrid-day-frame:hover .day-add {
+  opacity: 1;
+}
+
+/* Écrans tactiles : pas de survol, donc les boutons d'action révélés au survol restent visibles
+   (« … », poignées de déplacement, « + » des jours). Les info-bulles (group-hover/sw) restent cachées. */
+@media (hover: none) {
+  .group-hover\:opacity-100,
+  .group-hover\/row\:opacity-100,
+  .group-hover\/cover\:opacity-100,
+  .fc .day-add {
+    opacity: 1;
+  }
+}
+
+/* Thème journal uniquement (data-theme posé par AppShell) */
+/* ── Vues semaine / jour : en-tête des jours aéré, sans traits verticaux (inspiration 7.jpg) ── */
+[data-theme='journal'] .fc .fc-timegrid .fc-scrollgrid-section-header th {
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+[data-theme='journal'] .fc .fc-timegrid .fc-col-header-cell-cushion {
+  padding: 6px 4px;
+}
+
+/* ── Vue mois : chaque jour est un bloc épuré, séparé des autres (inspiration 6.jpg) ── */
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-scrollgrid,
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-scrollgrid th,
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-scrollgrid td {
+  border: none;
+}
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-col-header-cell {
+  text-align: right;
+}
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-col-header-cell-cushion {
+  padding: 2px 10px 8px;
+  color: var(--color-ink-3);
+}
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-day-today .fc-col-header-cell-cushion {
+  color: var(--color-ink-3);
+}
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-daygrid-day,
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-daygrid-day.fc-day-today,
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-daygrid-day.fc-day-other {
+  background: transparent;
+}
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-daygrid-day-frame {
+  /* La marge crée l'espace entre les blocs ; le min-height la compense pour ne pas déborder. */
+  margin: 2px;
+  min-height: calc(100% - 4px);
+  border-radius: 6px;
+  background: #f4f4fa;
+  transition: background-color 120ms;
+}
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-daygrid-day-frame:hover {
+  background: #ececf7;
+}
+/* Jours des mois voisins : pas de bloc, juste le numéro estompé */
+[data-theme='journal'] .fc .fc-dayGridMonth-view .fc-day-other .fc-daygrid-day-frame {
+  background: transparent;
+}
+
+/* ── Éditeur de page (Tiptap) ───────────────────────────────── */
+.rich-editor .ProseMirror {
+  outline: none;
+  min-height: 120px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.rich-editor .ProseMirror > * + * {
+  margin-top: 0.5em;
+}
+.rich-editor .ProseMirror h2 {
+  font-size: 1.35em;
+  font-weight: 600;
+  margin-top: 1em;
+}
+.rich-editor .ProseMirror h3 {
+  font-size: 1.15em;
+  font-weight: 600;
+}
+.rich-editor .ProseMirror ul {
+  list-style: disc;
+  padding-left: 1.4em;
+}
+.rich-editor .ProseMirror ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+}
+.rich-editor .ProseMirror a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgb(55 53 47 / 40%);
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.rich-editor .ProseMirror img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 0.5em 0;
+}
+.rich-editor .ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid var(--color-accent);
+}
+.rich-editor .ProseMirror blockquote {
+  border-left: 3px solid var(--color-ink);
+  padding-left: 0.9em;
+}
+.rich-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--color-ink-3);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* ── Mascotte : chat fantôme qui flotte partout ─────────────── */
+@keyframes mascot-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--mascot-tilt, 0deg));
+  }
+  50% {
+    transform: translateY(-7px) rotate(var(--mascot-tilt, 0deg));
+  }
+}
+@keyframes mascot-hop {
+  40% {
+    transform: translateY(-16px) scale(1.06);
+  }
+}
+@keyframes mascot-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+.mascot-float {
+  animation: mascot-float 2.6s ease-in-out infinite;
+}
+.mascot-hop .mascot-float {
+  animation: mascot-hop 0.55s ease-out;
+}
+.mascot-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mascot-blink 4.5s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
