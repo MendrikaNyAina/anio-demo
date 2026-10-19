@@ -30,7 +30,7 @@ export function Switch({
   const hintId = useId()
   const on = checked !== false
   const colors = tone === 'ink' ? ['bg-[#1D1B22]', 'bg-[#8E8B97]'] : ['bg-accent', 'bg-[#8fbdee]']
-  const customBg = color && checked !== false ? (checked === true ? color : `color-mix(in srgb, ${color} 45%, white)`) : undefined
+  const customBg = color && checked !== false ? (checked === true ? color : `color-mix(in srgb, ${color} 55%, white)`) : undefined
 
   const button = (
     <button

@@ -64,7 +64,7 @@ function Timer() {
               cy="120"
               r={R}
               fill="none"
-              stroke={journal ? tint(color, 70) : color}
+              stroke={journal ? tint(color, 80) : color}
               strokeWidth={journal ? 14 : 8}
               strokeLinecap="round"
               strokeDasharray={C}
@@ -93,7 +93,7 @@ function Timer() {
             <span
               key={i}
               className={cn('size-2.5 rounded-full', journal && 'border-[1.5px] border-[#A3A8EE]')}
-              style={{ background: i < cycle ? (journal ? tint(PHASE_COLOR_JOURNAL.work, 60) : PHASE_COLOR.work) : journal ? '#FFFFFF' : '#e3e2e0' }}
+              style={{ background: i < cycle ? (journal ? tint(PHASE_COLOR_JOURNAL.work, 70) : PHASE_COLOR.work) : journal ? '#FFFFFF' : '#e3e2e0' }}
             />
           ))}
         </div>
@@ -109,7 +109,7 @@ function Timer() {
               'flex h-12 min-w-[150px] items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold text-white transition-transform active:scale-95',
               journal && 'border-2 border-[#2F2B6E] font-plate shadow-[0_4px_0_#2F2B6E]',
             )}
-            style={{ background: journal ? tint(color, 85) : color }}
+            style={{ background: journal ? tint(color, 95) : color }}
           >
             {status === 'running' ? <Pause size={18} /> : <Play size={18} />}
             {status === 'running' ? 'Pause' : status === 'paused' ? 'Reprendre' : 'Démarrer'}

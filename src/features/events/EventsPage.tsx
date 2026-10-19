@@ -93,7 +93,7 @@ function EventRow({ event }: { event: CalendarEvent }) {
             type="button"
             title="Changer la couleur"
             className="size-5 rounded-[5px] border-2 border-dotted transition-transform hover:scale-110"
-            style={{ borderColor: event.color, background: tint(event.color, 18) }}
+            style={{ borderColor: event.color, background: tint(event.color, 23) }}
           />
         }
       >

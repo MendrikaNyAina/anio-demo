@@ -192,7 +192,7 @@ function ColorTag({ color, strong, children }: { color?: string; strong?: boolea
   return (
     <span
       className={cn('inline-flex min-w-0 items-center gap-1.5 truncate rounded-md px-1.5 py-px text-[#37352F]', strong ? 'font-semibold' : 'font-medium')}
-      style={{ background: color ? tint(color, 20) : '#F1F1EF' }}
+      style={{ background: color ? tint(color, 26) : '#F1F1EF' }}
     >
       {children}
     </span>

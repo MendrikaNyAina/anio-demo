@@ -144,9 +144,9 @@ function QuadrantBox({ id, title, hint, color, count, journal, children }: { id:
         journal ? 'rounded-[20px] border-2 bg-white shadow-[0_4px_0_#DCDDFF]' : 'rounded-lg border bg-white',
         isOver && 'ring-2 ring-offset-2',
       )}
-      style={{ borderColor: journal ? tint(color, 45) : tint(color, 35), ['--tw-ring-color' as string]: color }}
+      style={{ borderColor: journal ? tint(color, 55) : tint(color, 45), ['--tw-ring-color' as string]: color }}
     >
-      <header className={cn('flex items-center gap-2 px-3 py-2', journal && 'font-plate')} style={{ background: tint(color, journal ? 18 : 10) }}>
+      <header className={cn('flex items-center gap-2 px-3 py-2', journal && 'font-plate')} style={{ background: tint(color, journal ? 23 : 13) }}>
         <span className="size-2.5 shrink-0 rounded-full" style={{ background: color }} />
         <h3 className={cn('min-w-0 flex-1 truncate text-sm font-semibold', journal && 'text-[#2F2B6E]')}>{title}</h3>
         <span className="shrink-0 text-xs text-ink-2">{hint}</span>

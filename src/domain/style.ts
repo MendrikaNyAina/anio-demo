@@ -44,7 +44,7 @@ export function styleToCss(style: ResolvedStyle | null): CSSProperties {
   if (!style) return { background: '#F1F1EF', color: '#37352F', borderColor: 'transparent' }
   switch (style.target) {
     case 'background':
-      return { background: tint(style.color, 20), color: '#37352F', borderColor: 'transparent' }
+      return { background: tint(style.color, 26), color: '#37352F', borderColor: 'transparent' }
     case 'label':
       return { background: '#FFFFFF', color: shade(style.color, 82), borderColor: '#E9E9E7' }
     case 'border':
@@ -53,5 +53,5 @@ export function styleToCss(style: ResolvedStyle | null): CSSProperties {
 }
 
 export function eventCss(color: string): CSSProperties {
-  return { background: tint(color, 8), color: '#37352F', borderColor: color, borderStyle: 'dotted' }
+  return { background: tint(color, 10), color: '#37352F', borderColor: color, borderStyle: 'dotted' }
 }

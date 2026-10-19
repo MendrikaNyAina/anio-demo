@@ -217,7 +217,7 @@ function PixelSubRow({ group }: { group: SubcategoryGroup }) {
           </button>
           <span
             className="flex size-[38px] shrink-0 items-center justify-center rounded-xl border-[2.5px] border-[#3D2B6B]"
-            style={{ background: `color-mix(in srgb, ${sub.color} 18%, white)`, boxShadow: sub.isProject ? `0 0 0 3px ${sub.color}` : undefined }}
+            style={{ background: `color-mix(in srgb, ${sub.color} 23%, white)`, boxShadow: sub.isProject ? `0 0 0 3px ${sub.color}` : undefined }}
             title={sub.isProject ? 'Projet' : undefined}
           >
             <IconPicker icon={sub.icon} color={sub.color} onChange={(icon) => app.updateSubcategory(sub.id, { icon })} size={18} />

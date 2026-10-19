@@ -140,7 +140,7 @@ function StatTile({ icon, value, label }: { icon: ReactNode; value: number; labe
   const t = usePanelTone()
   return (
     <div className={cn('flex items-center gap-3 px-3 py-2.5', t.tile)}>
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-full text-ink-2" style={{ background: tint(LAVENDER, 22) }}>
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-full text-ink-2" style={{ background: tint(LAVENDER, 29) }}>
         {icon}
       </span>
       <span>
@@ -163,7 +163,7 @@ function ProjectTile({ project: { subcategory: s, done, total } }: { project: Pr
       className={cn('flex min-h-[168px] flex-col gap-2.5 p-3 text-left transition-transform duration-200 hover:-translate-y-0.5', t.tile)}
     >
       <span className="flex items-center justify-between">
-        <span className="flex size-9 items-center justify-center rounded-[12px] border-[1.5px]" style={{ background: tint(s.color, 30), borderColor: tint(s.color, 60) }}>
+        <span className="flex size-9 items-center justify-center rounded-[12px] border-[1.5px]" style={{ background: tint(s.color, 39), borderColor: tint(s.color, 70) }}>
           <IconView icon={s.icon} size={18} color={s.color} />
         </span>
         {s.isProject && <span className="rounded-full border border-line bg-white px-2 text-[11px] font-medium text-ink-2">projet</span>}
@@ -192,7 +192,7 @@ function NextDeadline({ subcategory: s }: { subcategory: Subcategory }) {
   return (
     <PanelCard title="Prochaine deadline">
       <div className={cn('flex items-center gap-3 px-3 py-2.5', t.tile)}>
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-[12px] border-[1.5px]" style={{ background: tint(s.color, 30), borderColor: tint(s.color, 60) }}>
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-[12px] border-[1.5px]" style={{ background: tint(s.color, 39), borderColor: tint(s.color, 70) }}>
           <IconView icon={s.icon} size={20} color={s.color} />
         </span>
         <span className={cn('min-w-0 flex-1 truncate text-[17px] font-semibold', t.ink)}>{s.name}</span>
@@ -209,7 +209,7 @@ function DayTaskRow({ entry }: { entry: Entry }) {
   const t = usePanelTone()
   const isEvent = entry.type === 'event'
   const color = (isEvent ? entry.eventColor : entry.style?.color) ?? NEUTRAL
-  const status = isEvent ? { label: 'événement', bg: tint(color, 25), fg: '#37352F' } : entry.done ? STATUS.done : STATUS.todo
+  const status = isEvent ? { label: 'événement', bg: tint(color, 33), fg: '#37352F' } : entry.done ? STATUS.done : STATUS.todo
 
   return (
     <div
@@ -220,11 +220,11 @@ function DayTaskRow({ entry }: { entry: Entry }) {
       className={cn('flex cursor-pointer items-center gap-2.5 px-2 py-2', t.row)}
     >
       {isEvent ? (
-        <span className="size-4 shrink-0 rounded-full border-2 border-dotted" style={{ borderColor: tint(color, 70) }} />
+        <span className="size-4 shrink-0 rounded-full border-2 border-dotted" style={{ borderColor: tint(color, 80) }} />
       ) : (
         <Checkbox checked={!!entry.done} onChange={() => toggleEntryDone(entry)} label="Fait" />
       )}
-      <span className="size-2.5 shrink-0 rounded-full" style={{ background: tint(color, 55) }} />
+      <span className="size-2.5 shrink-0 rounded-full" style={{ background: tint(color, 65) }} />
       <span className="min-w-0 flex-1">
         <span className={cn('block truncate text-sm font-medium', t.ink, entry.done && 'line-through opacity-60')}>{entry.title || 'Sans titre'}</span>
         <span className={cn('block truncate text-xs', t.soft)}>

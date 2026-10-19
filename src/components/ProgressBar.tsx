@@ -13,8 +13,8 @@ import { useApp, useTheme } from '@/store/appStore'
 const LINE = '#A3A8EE'
 const INK = '#2F2B6E'
 const NEUTRAL = '#9B9A97'
-const fill = (color: string) => tint(color, 40)
-const deep = (color: string) => tint(color, 60)
+const fill = (color: string) => tint(color, 50)
+const deep = (color: string) => tint(color, 70)
 const GLOSS = 'linear-gradient(to bottom, rgb(255 255 255 / 55%) 0 32%, transparent 32%)'
 
 const paper = (size: number): CSSProperties => ({
@@ -143,7 +143,7 @@ function PotionBar({ progress, size }: BarProps) {
     <div className="flex items-center">
       {/* La bulle se remplit au même niveau que la barre */}
       <div className="relative z-[2] flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full border-[3px] bg-white" style={{ borderColor: LINE, boxShadow: '0 4px 0 #DCDDFF' }}>
-        <span aria-hidden className="absolute inset-x-0 bottom-0 border-t-2 border-white transition-[height] duration-500" style={{ height: `${Math.max(ratio, 0.06) * 100}%`, background: tint('#9E8CF0', 40) }} />
+        <span aria-hidden className="absolute inset-x-0 bottom-0 border-t-2 border-white transition-[height] duration-500" style={{ height: `${Math.max(ratio, 0.06) * 100}%`, background: tint('#9E8CF0', 50) }} />
         <span aria-hidden className="absolute top-2 left-3 h-2 w-4 -rotate-[28deg] rounded-[50%] border-t-[3px] border-[#E6E5FB]" />
         <span className="relative font-plate text-lg leading-none font-semibold" style={{ color: INK }}>
           {percent(progress)}

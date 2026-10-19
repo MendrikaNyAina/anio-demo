@@ -19,7 +19,7 @@ import { TaskList } from './TaskList'
 // la carte choisie s'incline, et ses sous-catégories s'ouvrent dans le panneau de droite.
 
 const INK = '#1D1B22'
-const fillOf = (color: string) => `color-mix(in srgb, ${color} 42%, white)`
+const fillOf = (color: string) => `color-mix(in srgb, ${color} 52%, white)`
 const inkOf = (color: string) => `color-mix(in srgb, ${color} 42%, black)`
 
 export function SoftLayout({ real, other, onAddCategory }: { real: CategoryGroup[]; other: CategoryGroup; onAddCategory: () => void }) {
@@ -281,7 +281,7 @@ function SoftSubRow({ group }: { group: SubcategoryGroup }) {
           </button>
           <span
             className="flex size-8 shrink-0 items-center justify-center rounded-[10px]"
-            style={{ background: `color-mix(in srgb, ${sub.color} 14%, white)`, boxShadow: sub.isProject ? `0 0 0 2px ${sub.color}` : undefined }}
+            style={{ background: `color-mix(in srgb, ${sub.color} 18%, white)`, boxShadow: sub.isProject ? `0 0 0 2px ${sub.color}` : undefined }}
             title={sub.isProject ? 'Projet' : undefined}
           >
             <IconPicker icon={sub.icon} color={sub.color} onChange={(icon) => app.updateSubcategory(sub.id, { icon })} size={17} />

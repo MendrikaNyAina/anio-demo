@@ -149,7 +149,7 @@ function DayRow({ entry }: { entry: Entry }) {
       className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm hover:bg-hover"
     >
       {isEvent ? <span className="size-4 shrink-0" /> : <Checkbox checked={!!entry.done} onChange={() => toggleEntryDone(entry)} label="Fait" />}
-      <span className="size-2 shrink-0 rounded-full" style={{ background: color ? tint(color, 40) : '#E9E9E7' }} />
+      <span className="size-2 shrink-0 rounded-full" style={{ background: color ? tint(color, 50) : '#E9E9E7' }} />
       <span className={cn('min-w-0 flex-1 truncate', entry.done && 'text-ink-3 line-through')}>{entry.title || 'Sans titre'}</span>
       <span className="shrink-0 text-xs text-ink-3">{entry.allDay ? 'Journée' : `${fmtTime(entry.start)} – ${fmtTime(entry.end)}`}</span>
       <span className="hidden w-24 shrink-0 text-right text-xs text-ink-3 sm:block">{KIND_LABEL[entry.type]}</span>

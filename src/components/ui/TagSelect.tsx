@@ -22,7 +22,7 @@ export function Tag({ label, color, className }: { label: string; color: string;
         journal ? 'rounded-full border-[1.5px] px-2 font-plate font-medium' : 'rounded-[3px]',
         className,
       )}
-      style={{ background: tint(color, journal ? 25 : 20), color: shade(color, 70), borderColor: journal ? tint(color, 55) : undefined }}
+      style={{ background: tint(color, journal ? 33 : 26), color: shade(color, 70), borderColor: journal ? tint(color, 65) : undefined }}
     >
       {label}
     </span>

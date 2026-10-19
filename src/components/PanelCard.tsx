@@ -38,7 +38,7 @@ export function PanelCard({ title, action, accent = LAVENDER, className, childre
 
   return (
     <section className={cn('rounded-xl border border-line bg-white px-2 pt-1.5 pb-2 transition-shadow hover:shadow-[0_2px_10px_rgb(0_0_0/6%)]', className)}>
-      <div className="mb-2 flex h-9 items-center justify-between gap-2 rounded-md px-2" style={{ background: tint(accent, 16) }}>
+      <div className="mb-2 flex h-9 items-center justify-between gap-2 rounded-md px-2" style={{ background: tint(accent, 21) }}>
         <h3 className="truncate text-[15px] font-semibold">{title}</h3>
         {action}
       </div>

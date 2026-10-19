@@ -65,7 +65,7 @@ export function HabitInsights({
               {m.due > 0 ? (
                 <span
                   className="w-full rounded-t-md transition-[height] duration-500"
-                  style={{ height: `${Math.max(rate(m), 4)}%`, background: tint(color, 55), boxShadow: `inset 0 0 0 1.5px ${tint(color, 80)}` }}
+                  style={{ height: `${Math.max(rate(m), 4)}%`, background: tint(color, 65), boxShadow: `inset 0 0 0 1.5px ${tint(color, 90)}` }}
                 />
               ) : (
                 <span className={cn('h-1 w-full rounded-full', t.empty)} />
@@ -84,7 +84,7 @@ export function HabitInsights({
               {d.due > 0 ? (
                 <>
                   <span className={cn('h-2.5 min-w-0 flex-1 overflow-hidden rounded-full', t.empty)}>
-                    <span className="block h-full rounded-full transition-[width] duration-500" style={{ width: `${rate(d)}%`, background: tint(color, 55) }} />
+                    <span className="block h-full rounded-full transition-[width] duration-500" style={{ width: `${rate(d)}%`, background: tint(color, 65) }} />
                   </span>
                   <span className={cn('w-9 shrink-0 text-right font-semibold tabular-nums', t.ink)}>{rate(d)} %</span>
                 </>
@@ -118,7 +118,7 @@ function TodayChecklist({ habits, today, colorOf, onSelect }: { habits: Task[]; 
             <div key={h.id} className={cn('flex items-center gap-2 px-1.5 py-1 text-[13px]', t.row)}>
               <Checkbox checked={checked} onChange={() => toggle(h.id, key)} label={`${h.title} fait aujourd'hui`} />
               <button type="button" onClick={() => onSelect(h.id)} className="flex min-w-0 flex-1 items-center gap-2 text-left" title="Ouvrir son suivi">
-                <span className="size-2.5 shrink-0 rounded-full" style={{ background: tint(colorOf(h), 55) }} />
+                <span className="size-2.5 shrink-0 rounded-full" style={{ background: tint(colorOf(h), 65) }} />
                 <span className={cn('min-w-0 flex-1 truncate', checked && 'line-through opacity-60')}>{h.title || 'Sans titre'}</span>
               </button>
             </div>
@@ -133,7 +133,7 @@ function Streak({ icon, value, label, color }: { icon: ReactNode; value: number;
   const t = usePanelTone()
   return (
     <div className={cn('flex items-center gap-3 px-3 py-2.5', t.tile)}>
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-full" style={{ background: tint(color, 30), color: shade(color, 70) }}>
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-full" style={{ background: tint(color, 39), color: shade(color, 70) }}>
         {icon}
       </span>
       <span>

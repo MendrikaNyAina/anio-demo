@@ -73,7 +73,7 @@ export function HabitTracker({
 
         <div className={cn('flex flex-wrap items-center gap-x-3 gap-y-1 text-sm', soft)}>
           {label && (
-            <span className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-px font-medium text-[#37352F]" style={{ background: tint(color, 20) }}>
+            <span className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-px font-medium text-[#37352F]" style={{ background: tint(color, 26) }}>
               <IconView icon={icon} size={13} color={color} />
               {label}
             </span>
@@ -140,7 +140,7 @@ export function HabitTracker({
 function cellStyle(state: HabitCellState, color: string, journal: boolean) {
   switch (state) {
     case 'done':
-      return { background: tint(color, 55), borderColor: tint(color, 80), color: shade(color, 70) }
+      return { background: tint(color, 65), borderColor: tint(color, 90), color: shade(color, 70) }
     case 'missed':
       return { background: '#E3E2E0', borderColor: '#D3D1CB' }
     case 'today':

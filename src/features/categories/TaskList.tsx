@@ -192,7 +192,7 @@ function NotionTaskRow({ task, onToggle }: RowProps) {
         )}
       </div>
       {task.priority && (
-        <span className="hidden shrink-0 rounded px-1.5 text-[11px] font-medium @md:inline" style={{ color: PRIORITY_COLOR[task.priority], background: `color-mix(in srgb, ${PRIORITY_COLOR[task.priority]} 12%, white)` }}>
+        <span className="hidden shrink-0 rounded px-1.5 text-[11px] font-medium @md:inline" style={{ color: PRIORITY_COLOR[task.priority], background: `color-mix(in srgb, ${PRIORITY_COLOR[task.priority]} 16%, white)` }}>
           {PRIORITY_LABEL[task.priority]}
         </span>
       )}
@@ -256,7 +256,7 @@ function SoftTaskRow({ task, onToggle }: RowProps) {
           <Clock size={12} /> {taskDisplayRange(task)}
         </span>
         {task.priority && (
-          <span className="rounded-md px-1.5 font-semibold" style={{ color: PRIORITY_COLOR[task.priority], background: `color-mix(in srgb, ${PRIORITY_COLOR[task.priority]} 12%, white)` }}>
+          <span className="rounded-md px-1.5 font-semibold" style={{ color: PRIORITY_COLOR[task.priority], background: `color-mix(in srgb, ${PRIORITY_COLOR[task.priority]} 16%, white)` }}>
             {PRIORITY_LABEL[task.priority]}
           </span>
         )}

@@ -48,7 +48,7 @@ function Card({ children, className }: { children: ReactNode; className?: string
 }
 
 /** Fond pastel de la ligne d'une catégorie (comme les fonds colorés de Notion). */
-const headerTint = (color: string) => tint(color, 16)
+const headerTint = (color: string) => tint(color, 21)
 
 /** Aperçu qui suit la souris pendant le déplacement d'une carte. */
 function CategoryCardPreview({ category }: { category: Category }) {

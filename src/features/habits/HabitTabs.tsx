@@ -217,5 +217,5 @@ function Row({ onClick, children }: { onClick?: () => void; children: ReactNode 
 
 /** Pastille de la couleur de la (sous-)catégorie, pastélisée. */
 function Dot({ color }: { color: string }) {
-  return <span className="size-2.5 shrink-0 rounded-full" style={{ background: tint(color, 55), boxShadow: `inset 0 0 0 1.5px ${tint(color, 85)}` }} />
+  return <span className="size-2.5 shrink-0 rounded-full" style={{ background: tint(color, 65), boxShadow: `inset 0 0 0 1.5px ${tint(color, 95)}` }} />
 }

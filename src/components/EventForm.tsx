@@ -62,7 +62,7 @@ function EventForm({ form }: { form: EventFormState }) {
         <Popover
           trigger={
             <button type="button" className="flex items-center gap-2 rounded-md px-1.5 py-1 text-sm hover:bg-hover">
-              <span className="size-4 rounded border-2 border-dotted" style={{ borderColor: draft.color, background: `color-mix(in srgb, ${draft.color} 12%, white)` }} />
+              <span className="size-4 rounded border-2 border-dotted" style={{ borderColor: draft.color, background: `color-mix(in srgb, ${draft.color} 16%, white)` }} />
               <span className="font-mono text-xs uppercase">{draft.color}</span>
             </button>
           }
