@@ -30,7 +30,7 @@ export function FiltersBar({ filters, onChange }: { filters: CalendarFilters; on
   return (
     <div role="group" aria-label="Filtres" className={cn('flex flex-wrap items-center', journal ? 'gap-2 font-plate' : 'gap-1.5')}>
       {journal ? (
-        <span className="mr-1 inline-flex h-7 -rotate-3 items-center gap-1.5 rounded-full border-2 border-[#A3A8EE] bg-[#DCDDFF] pr-3 pl-2.5 text-[13px] font-semibold text-[#2F2B6E]">
+        <span className="mr-1 inline-flex h-7 -rotate-3 items-center gap-1.5 rounded-full border-2 border-journal-green-line bg-journal-green pr-3 pl-2.5 text-[13px] font-semibold text-[#2F2B6E]">
           <Filter size={14} strokeWidth={2.2} />
           filtres
         </span>
@@ -167,14 +167,14 @@ function Chip({ label, icon, active, count = 0, children }: { label: string; ico
           type="button"
           className={cn(
             'group flex h-9 items-center gap-1.5 rounded-full border-2 pr-2.5 pl-3 text-sm font-medium text-[#2F2B6E] transition-colors [&_svg]:size-[15px]',
-            active ? 'border-[#7F84E3] bg-[#DCDDFF]' : 'border-[#A3A8EE] bg-[#F4F3FF] hover:bg-[#ECEBFF]',
+            active ? 'border-journal-green-line bg-journal-green-soft' : 'border-[#A3A8EE] bg-[#F4F3FF] hover:bg-[#ECEBFF]',
             'data-[state=open]:border-[#2F2B6E] data-[state=open]:bg-white',
           )}
         >
           <span className={cn('flex', !active && 'text-[#6E6BC4] group-data-[state=open]:text-[#2F2B6E]')}>{icon}</span>
           {label}
           {count > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full border-[1.5px] border-[#2F2B6E] bg-[#FFE08A] px-1 text-xs leading-none font-semibold">
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full border-[1.5px] border-[#2F2B6E] bg-journal-fuchsia px-1 text-xs leading-none font-semibold">
               {count}
             </span>
           )}

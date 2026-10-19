@@ -204,7 +204,7 @@ type StickerProps = { size: number; className?: string; style?: CSSProperties }
 function Star({ size, className, style }: StickerProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" className={cn('pointer-events-none', className)} style={style}>
-      <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#FFE08A" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#E86AAE" stroke={INK} strokeWidth="1.8" strokeLinejoin="round" />
     </svg>
   )
 }

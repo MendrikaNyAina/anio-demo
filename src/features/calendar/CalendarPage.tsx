@@ -261,8 +261,8 @@ function CalendarScreen({ mode }: { mode: CalendarMode }) {
       onClick={toggleUnscheduled}
       title="Tâches non planifiées"
       className={cn(
-        'flex h-8 items-center gap-1.5 rounded-full border-2 border-[#A3A8EE] px-3 font-plate text-[13px] font-semibold text-[#2F2B6E] shadow-[0_3px_0_#DCDDFF] transition-colors hover:bg-[#DCDDFF]',
-        unscheduledOpen ? 'bg-[#DCDDFF]' : 'bg-[#F4F3FF]',
+        'flex h-8 items-center gap-1.5 rounded-full border-2 px-3 font-plate text-[13px] font-semibold text-[#2F2B6E] shadow-[0_3px_0_#DCDDFF] transition-colors hover:bg-[#DCDDFF]',
+        unscheduledOpen ? 'border-journal-green-line bg-journal-green' : 'border-[#A3A8EE] bg-[#F4F3FF]',
       )}
     >
       <Inbox size={14} /> {unscheduledOpen ? 'Masquer' : 'Non planifiées'}

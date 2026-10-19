@@ -19,6 +19,13 @@
   --color-accent: #2383e2;
   --color-accent-soft: #e8f1fb;
   --color-danger: #d44c47;
+  /* Thème journal : lavande dominante (≈ 70 %, en dur dans les composants), vert pistache pour les
+     étiquettes et états actifs (≈ 22 %), fuchsia pour les touches d'accent (≈ 8 %). */
+  --color-journal-green-soft: #eef5d6;
+  --color-journal-green: #dcebb0;
+  --color-journal-green-strong: #cbe08f;
+  --color-journal-green-line: #a6c25e;
+  --color-journal-fuchsia: #e86aae;
   --shadow-pop: 0 0 0 1px rgb(15 15 15 / 5%), 0 3px 6px rgb(15 15 15 / 10%), 0 9px 24px rgb(15 15 15 / 20%);
   --animate-pop: pop 120ms ease-out;
 }

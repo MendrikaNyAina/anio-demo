@@ -82,7 +82,7 @@ function Timer() {
           </div>
           {journal && (
             <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true" className="absolute top-3 right-4 rotate-12">
-              <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#FFE08A" stroke="#2F2B6E" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#E86AAE" stroke="#2F2B6E" strokeWidth="1.8" strokeLinejoin="round" />
             </svg>
           )}
         </div>

@@ -40,7 +40,7 @@ export function JournalTitle({
           >
             {tab}
             <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#FFE08A" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
+              <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#E86AAE" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
             </svg>
           </span>
 
@@ -72,7 +72,7 @@ export function JournalTitle({
 
           {/* Stickers */}
           <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true" className="pointer-events-none absolute -bottom-1 -left-3 rotate-[-14deg]">
-            <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#FFE08A" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
+            <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#E86AAE" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
           </svg>
           <svg width="24" height="22" viewBox="0 0 24 22" aria-hidden="true" className="pointer-events-none absolute right-6 -bottom-[6px] rotate-[10deg]">
             <path d="M12 20s-8-5-9.5-10C1.3 6 4 3 7 3c2 0 3.6 1.2 5 3 1.4-1.8 3-3 5-3 3 0 5.7 3 4.5 7C20 15 12 20 12 20z" fill="#F9C6DD" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />

@@ -27,7 +27,7 @@ export function NotionSourcesList() {
     // Thème journal : carte blanche avec sa languette « sources », dans le menu façon carnet.
     return (
       <div className="relative pt-3">
-        <span className="absolute top-0 left-3 z-[1] inline-flex -rotate-2 items-center rounded-full border-2 border-[#A3A8EE] bg-[#DCDDFF] px-[9px] text-[11px] leading-5 font-semibold">sources</span>
+        <span className="absolute top-0 left-3 z-[1] inline-flex -rotate-2 items-center rounded-full border-2 border-journal-green-line bg-journal-green px-[9px] text-[11px] leading-5 font-semibold">sources</span>
         <div className="flex flex-col gap-0.5 rounded-[18px] border-2 border-[#A3A8EE] bg-white px-2 pt-4 pb-2">
           {rows}
           <button

@@ -15,7 +15,7 @@ const RINGS = Array.from({ length: 30 }, (_, i) => i)
 
 const star = (
   <svg viewBox="0 0 24 24" aria-hidden="true" className="size-full">
-    <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#FFE08A" stroke="#2F2B6E" strokeWidth="2.2" strokeLinejoin="round" />
+    <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6z" fill="#E86AAE" stroke="#2F2B6E" strokeWidth="2.2" strokeLinejoin="round" />
   </svg>
 )
 
@@ -47,21 +47,21 @@ export function JournalSidebar({
           aria-hidden
           className="pointer-events-none absolute -top-1 left-[88px] h-5 w-[86px] -rotate-[4deg] opacity-90"
           style={{
-            backgroundImage: 'repeating-linear-gradient(-45deg, #C9CDFF 0 7px, #E6DCFF 7px 14px)',
+            backgroundImage: 'repeating-linear-gradient(-45deg, #DCEBB0 0 7px, #EEF5D6 7px 14px)',
             clipPath: 'polygon(0 12%, 5% 0, 95% 0, 100% 14%, 97% 50%, 100% 86%, 95% 100%, 5% 100%, 0 88%, 3% 50%)',
           }}
         />
 
         {/* Compte, avec sa languette */}
         <div className="relative mb-[22px] shrink-0 pt-3.5">
-          <span className="absolute top-0 left-3.5 z-[1] inline-flex items-center gap-[5px] rounded-full border-2 border-[#A3A8EE] bg-[#DCDDFF] px-[9px] text-[11px] leading-5 font-semibold">
+          <span className="absolute top-0 left-3.5 z-[1] inline-flex items-center gap-[5px] rounded-full border-2 border-journal-green-line bg-journal-green px-[9px] text-[11px] leading-5 font-semibold">
             mon espace
             <span className="size-2.5">{star}</span>
           </span>
           <button
             type="button"
             onClick={account.openFromButton}
-            className="flex w-full items-center gap-2.5 rounded-[18px] border-2 border-[#A3A8EE] bg-white px-2.5 pt-3.5 pb-2.5 text-left shadow-[0_4px_0_#DCDDFF] transition-colors hover:bg-[#FBFAFF]"
+            className="flex w-full items-center gap-2.5 rounded-[18px] border-2 border-[#A3A8EE] bg-white px-2.5 pt-3.5 pb-2.5 text-left shadow-[0_4px_0_var(--color-journal-green)] transition-colors hover:bg-[#FBFAFF]"
           >
             <span className="flex size-[30px] shrink-0 items-center justify-center rounded-full border-2 border-[#2F2B6E] bg-[#F9C6DD] text-sm font-semibold">{name[0]}</span>
             <span className="min-w-0 flex-1">
@@ -154,7 +154,7 @@ export function JournalSidebar({
   )
 }
 
-/** Lien principal. Actif : étiquette blanche penchée, ombre lavande et petite étoile collée. */
+/** Lien principal. Actif : étiquette blanche penchée, ombre vert pistache et petite étoile collée. */
 function Item({ to, icon, active, children }: { to: string; icon: ReactNode; active?: boolean; children: ReactNode }) {
   return (
     <NavLink
@@ -164,7 +164,7 @@ function Item({ to, icon, active, children }: { to: string; icon: ReactNode; act
         cn(
           'relative flex items-center gap-2.5 rounded-xl text-[15px] transition-colors [&>svg]:size-[18px] [&>svg]:shrink-0',
           isActive || active
-            ? 'my-1 h-10 -rotate-[1.2deg] border-2 border-[#A3A8EE] bg-white px-3 font-semibold text-[#2F2B6E] shadow-[0_4px_0_#DCDDFF]'
+            ? 'my-1 h-10 -rotate-[1.2deg] border-2 border-journal-green-line bg-white px-3 font-semibold text-[#2F2B6E] shadow-[0_4px_0_var(--color-journal-green)]'
             : 'h-9 px-2.5 font-medium text-[#5B57A6] hover:bg-white/70 hover:text-[#2F2B6E]',
         )
       }
@@ -180,7 +180,7 @@ function Item({ to, icon, active, children }: { to: string; icon: ReactNode; act
   )
 }
 
-/** Vue du calendrier (Mois / Semaine / Jour). Active : fond lavande et puce bleu nuit. */
+/** Vue du calendrier (Mois / Semaine / Jour). Active : fond vert pistache et puce bleu nuit. */
 function SubItem({ to, children }: { to: string; children: ReactNode }) {
   return (
     <NavLink
@@ -189,7 +189,7 @@ function SubItem({ to, children }: { to: string; children: ReactNode }) {
       className={({ isActive }) =>
         cn(
           'flex h-[30px] items-center gap-2 rounded-[10px] px-2.5 text-sm transition-colors',
-          isActive ? 'bg-[#DCDDFF] font-semibold text-[#2F2B6E]' : 'font-medium text-[#5B57A6] hover:bg-white/70 hover:text-[#2F2B6E]',
+          isActive ? 'bg-journal-green font-semibold text-[#2F2B6E]' : 'font-medium text-[#5B57A6] hover:bg-white/70 hover:text-[#2F2B6E]',
         )
       }
     >

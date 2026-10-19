@@ -80,7 +80,7 @@ export function PageTab({
 export function TabBadge({ children }: { children: ReactNode }) {
   const journal = useTheme() === 'journal'
   return journal ? (
-    <span className="flex h-4 min-w-4 items-center justify-center rounded-full border-[1.5px] px-1 text-[10px] leading-none font-semibold" style={{ borderColor: INK, background: '#FFE08A', color: INK }}>
+    <span className="flex h-4 min-w-4 items-center justify-center rounded-full border-[1.5px] px-1 text-[10px] leading-none font-semibold" style={{ borderColor: INK, background: '#E86AAE', color: INK }}>
       {children}
     </span>
   ) : (

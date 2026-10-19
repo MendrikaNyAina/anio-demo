@@ -53,7 +53,7 @@ export function SidebarRail({ onOpen }: { onOpen: () => void }) {
               'flex size-10 items-center justify-center transition-colors [&>svg]:size-[18px]',
               journal
                 ? active
-                  ? 'rounded-xl border-2 border-[#A3A8EE] bg-white text-[#2F2B6E] shadow-[0_3px_0_#DCDDFF]'
+                  ? 'rounded-xl border-2 border-journal-green-line bg-white text-[#2F2B6E] shadow-[0_3px_0_var(--color-journal-green)]'
                   : 'rounded-xl hover:bg-white/70 hover:text-[#2F2B6E]'
                 : active
                   ? 'rounded-md bg-press text-ink'

@@ -136,7 +136,7 @@ export function Segmented<T extends string>({
             journal ? 'rounded-full px-3 py-0.5' : 'rounded-[5px] px-2.5 py-0.5 font-medium',
             value === o.value
               ? journal
-                ? 'bg-white font-semibold text-[#2F2B6E] shadow-[0_2px_0_#DCDDFF]'
+                ? 'bg-white font-semibold text-[#2F2B6E] shadow-[0_2px_0_var(--color-journal-green-line)]'
                 : 'bg-white text-ink shadow-[0_1px_2px_rgb(0_0_0/10%)]'
               : journal
                 ? 'font-medium text-[#5B57A6] hover:text-[#2F2B6E]'

@@ -51,8 +51,8 @@ function JournalLegend() {
           aria-expanded={open}
           title={HINT}
           className={cn(
-            'inline-flex items-center gap-1 rounded-full border-2 border-[#A3A8EE] px-2.5 font-plate text-[12px] leading-[20px] font-semibold text-[#2F2B6E] transition-colors hover:bg-[#C9CDFF]',
-            open ? 'bg-[#C9CDFF]' : 'bg-[#DCDDFF]',
+            'inline-flex items-center gap-1 rounded-full border-2 border-journal-green-line px-2.5 font-plate text-[12px] leading-[20px] font-semibold text-[#2F2B6E] transition-colors hover:bg-journal-green-strong',
+            open ? 'bg-journal-green-strong' : 'bg-journal-green',
           )}
         >
           légende
