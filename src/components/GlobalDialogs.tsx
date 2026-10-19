@@ -154,7 +154,7 @@ function DeleteChoiceDialog() {
             </span>
           </Button>
         )}
-        <Button variant="outline" className="h-auto justify-start py-2 text-left text-danger" onClick={() => run(isHabit ? 'Habitude supprimée' : 'Tâche supprimée', () => app.deleteTask(task.id))}>
+        <Button variant="outline" className="h-auto justify-start py-2 text-left text-danger" onClick={() => run(isHabit ? 'Habitude mise à la poubelle' : 'Tâche mise à la poubelle', () => app.deleteTask(task.id))}>
           <span>
             <span className="block">{isHabit ? "Toute l'habitude" : 'Toute la tâche'}</span>
             <span className="block text-xs font-normal text-ink-2">{isHabit ? 'Toutes les occurrences, passées et futures.' : 'Tous ses créneaux.'}</span>

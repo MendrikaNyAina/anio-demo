@@ -6,7 +6,11 @@ import { groupForCategoryPage, normalizeLinks } from './grouping'
 import { habitCellState, habitMonthTallies, habitStreaks, habitWeekdayTallies, habitYearStats, isHabitEnded } from './habitTracking'
 import { expandHabit } from './habits'
 import { buildLookup } from './lookup'
-import { weekProgress } from './progress'
+import { clickSituation, fillTemplate } from './mascot'
+import { buildMatrix, periodRange, quadrantOf } from './eisenhower'
+import { taskProgress, weekProgress } from './progress'
+import { globalStats } from './stats'
+import { keepRecent, trashDaysLeft } from './trash'
 import { resolveTaskStyle } from './style'
 import { EMPTY_FILTERS, OTHER, type DataState, type Task } from './types'
 import { passesCategoryFilter } from './visibility'
@@ -235,5 +239,87 @@ describe('créneaux de tâche : un seul jour', () => {
     expect(clampToDay(slot)).toBe(slot)
     expect(isSingleDay({ start: atTime('2026-10-13', '00:00'), end: atTime('2026-10-14', '00:00') })).toBe(true)
     expect(isSingleDay({ start: atTime('2026-10-13', '23:00'), end: atTime('2026-10-14', '00:30') })).toBe(false)
+  })
+})
+
+describe('matrice d’Eisenhower', () => {
+  it('range une tâche selon urgence × importance, null si incomplet', () => {
+    expect(quadrantOf({ urgent: true, priority: 'high' })).toBe('q1')
+    expect(quadrantOf({ urgent: false, priority: 'medium' })).toBe('q2')
+    expect(quadrantOf({ urgent: true, priority: 'low' })).toBe('q3')
+    expect(quadrantOf({ urgent: false, priority: 'low' })).toBe('q4')
+    expect(quadrantOf({ urgent: true })).toBeNull()
+    expect(quadrantOf({ priority: 'high' })).toBeNull()
+  })
+
+  it('ne garde que les tâches de la période, sans habitudes, une seule fois chacune', () => {
+    const day = (d: string) => ({ id: d, allDay: true as const, startsOn: d, endsOn: d })
+    const tasks = [
+      task({ id: 'a', urgent: true, priority: 'high', slots: [day('2026-10-13'), day('2026-10-14')] }),
+      task({ id: 'b', slots: [day('2026-10-14')] }),
+      task({ id: 'c', urgent: false, priority: 'low', slots: [day('2026-10-30')] }),
+      task({ id: 'h', kind: 'habit', urgent: true, priority: 'high' }),
+    ]
+    const m = buildMatrix({ tasks }, periodRange('week', new Date(2026, 9, 14)))
+    expect(m.quadrants.q1.map((t) => t.id)).toEqual(['a'])
+    expect(m.unclassified.map((t) => t.id)).toEqual(['b'])
+    expect(m.quadrants.q4).toHaveLength(0)
+  })
+
+  it('colore la tâche par son quadrant en mode Eisenhower', () => {
+    const data = fixture()
+    data.settings.colorMode = 'eisenhower'
+    const lookup = buildLookup(data)
+    const [projet] = data.categories
+    expect(resolveTaskStyle({ primaryCategoryId: projet.id, urgent: true, priority: 'high' }, lookup)?.color).toBe(data.settings.eisenhowerColors.q1)
+    expect(resolveTaskStyle({ primaryCategoryId: projet.id, kind: 'habit' }, lookup)?.color).toBe(projet.color)
+  })
+})
+
+describe('taskProgress', () => {
+  it('compte les sous-tâches en priorité', () => {
+    const p = taskProgress(task({ subtasks: [{ id: '1', title: 'a', done: true }, { id: '2', title: 'b', done: false }] }), '#000')
+    expect([p?.done, p?.total, p?.unit]).toEqual([1, 2, 'subtasks'])
+  })
+  it('sinon les créneaux cochés d’une tâche étalée', () => {
+    const slot = (id: string, done: boolean) => ({ id, allDay: true as const, startsOn: '2026-10-13', endsOn: '2026-10-13', done })
+    const p = taskProgress(task({ kind: 'spread', slots: [slot('1', true), slot('2', false), slot('3', true)] }), '#000')
+    expect([p?.done, p?.total, p?.unit]).toEqual([2, 3, 'slots'])
+  })
+  it('rien à mesurer pour une tâche simple sans sous-tâche', () => {
+    expect(taskProgress(task({}), '#000')).toBeNull()
+  })
+})
+
+describe('globalStats', () => {
+  it('compte les tâches cochées par jour et les projets terminés', () => {
+    const data = fixture()
+    const now = new Date(2026, 9, 13, 12)
+    const stats = globalStats(data, now, 30)
+    expect(stats.curve).toHaveLength(30)
+    expect(stats.curve.at(-1)!.day).toBe('2026-10-13')
+    expect(stats.completedRecent).toBe(stats.curve.reduce((n, c) => n + c.count, 0))
+    expect(stats.projects).toBe(data.subcategories.filter((s) => s.isProject).length)
+    expect(stats.categories).toBe(data.categories.length)
+  })
+})
+
+describe('mascotte', () => {
+  it('remplace les codes connus et laisse les inconnus', () => {
+    expect(fillTemplate('Encore {restantes} pour {prenom} {oups}', { restantes: '3', prenom: 'Mendrika' })).toBe('Encore 3 pour Mendrika {oups}')
+  })
+  it('choisit la situation au clic', () => {
+    expect(clickSituation({ total: '0', restantes: '0' })).toBe('clickEmpty')
+    expect(clickSituation({ total: '4', restantes: '0' })).toBe('clickDone')
+    expect(clickSituation({ total: '4', restantes: '1' })).toBe('clickTodo')
+  })
+})
+
+describe('poubelle', () => {
+  it('garde 30 jours', () => {
+    const now = new Date(2026, 9, 31)
+    const item = (deletedAt: string) => ({ id: deletedAt, kind: 'task' as const, deletedAt })
+    expect(keepRecent([item('2026-10-30T10:00:00'), item('2026-09-30T10:00:00')], now).map((i) => i.id)).toEqual(['2026-10-30T10:00:00'])
+    expect(trashDaysLeft(item('2026-10-30T10:00:00'), now)).toBe(29)
   })
 })

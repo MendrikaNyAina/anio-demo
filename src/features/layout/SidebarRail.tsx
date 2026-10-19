@@ -1,4 +1,4 @@
-import { CalendarDays, ChartColumn, ChevronsRight, Folder, Settings, Smile, Sparkles } from 'lucide-react'
+import { CalendarDays, ChartColumn, ChevronsRight, Folder, Ghost, Settings, Smile, Sparkles, Timer, Trash2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router'
 import { cn } from '@/lib/utils'
@@ -9,8 +9,11 @@ const ITEMS: { to: string; label: string; icon: ReactNode; match?: string }[] = 
   { to: '/events', label: 'Événements', icon: <Sparkles /> },
   { to: '/calendar/week', label: 'Calendrier', icon: <CalendarDays />, match: '/calendar' },
   { to: '/bilan', label: 'Bilan', icon: <ChartColumn />, match: '/bilan' },
+  { to: '/pomodoro', label: 'Pomodoro', icon: <Timer /> },
+  { to: '/mascot', label: 'Mascotte', icon: <Ghost /> },
   { to: '/settings', label: 'Paramètres', icon: <Settings /> },
   { to: '/icons', label: 'Icônes', icon: <Smile /> },
+  { to: '/trash', label: 'Poubelle', icon: <Trash2 /> },
 ]
 
 /** Menu replié (ordinateur) : un rail d'icônes pour naviguer, et le bouton pour rouvrir le menu complet. */

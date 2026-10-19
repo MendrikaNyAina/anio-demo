@@ -1,5 +1,5 @@
 import type { Entry } from './entries'
-import type { DataState, ID, Subcategory } from './types'
+import type { DataState, ID, Subcategory, Task } from './types'
 
 export interface ProgressSegment {
   color: string
@@ -35,6 +35,16 @@ export function weekProgress(entries: Entry[]): Progress {
     units.set(key, { done: e.done, color: e.style?.color ?? NEUTRAL })
   }
   return summarize([...units.values()])
+}
+
+/**
+ * Progression affichée dans la page d'une tâche : ses sous-tâches s'il y en a,
+ * sinon (tâche étalée) ses créneaux cochés. `null` s'il n'y a rien à mesurer.
+ */
+export function taskProgress(task: Pick<Task, 'kind' | 'subtasks' | 'slots'>, color: string): (Progress & { unit: 'subtasks' | 'slots' }) | null {
+  if (task.subtasks.length > 0) return { ...singleColorProgress(task.subtasks.filter((s) => s.done).length, task.subtasks.length, color), unit: 'subtasks' }
+  if (task.kind === 'spread' && task.slots.length > 0) return { ...singleColorProgress(task.slots.filter((s) => s.done).length, task.slots.length, color), unit: 'slots' }
+  return null
 }
 
 export interface ProjectProgress extends Progress {

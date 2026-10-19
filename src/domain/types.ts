@@ -45,8 +45,8 @@ export interface Subcategory extends Category {
 
 /** Un créneau : soit horaire, soit en journée(s) entière(s) (fin incluse). */
 export type Slot =
-  | { id: ID; allDay: false; start: ISODateTime; end: ISODateTime }
-  | { id: ID; allDay: true; startsOn: DateKey; endsOn: DateKey }
+  | { id: ID; allDay: false; start: ISODateTime; end: ISODateTime; done?: boolean }
+  | { id: ID; allDay: true; startsOn: DateKey; endsOn: DateKey; done?: boolean }
 
 export interface Recurrence {
   /** Jours ISO : 1 = lundi … 7 = dimanche. Le vrai projet sérialisera ça en RRULE. */
@@ -76,7 +76,10 @@ export interface Task {
   kind: TaskKind
   title: string
   priority?: Priority
+  /** Matrice d'Eisenhower (l'importance vient de la priorité). Absent = pas encore classée. */
+  urgent?: boolean
   done: boolean
+  /** Date à laquelle la tâche a été cochée (effacée quand on la décoche). */
   doneAt?: ISODateTime
   content?: JSONContent
   subtasks: Subtask[]
@@ -134,6 +137,53 @@ export interface CalendarView {
   position: number
 }
 
+/** Quadrants de la matrice d'Eisenhower : q1 urgent et important, q2 important, q3 urgent, q4 ni l'un ni l'autre. */
+export type Quadrant = 'q1' | 'q2' | 'q3' | 'q4'
+
+export interface PomodoroSettings {
+  workMin: number
+  shortBreakMin: number
+  longBreakMin: number
+  /** Sessions de travail avant une pause longue. */
+  cyclesBeforeLong: number
+  sound: boolean
+}
+
+export interface PomodoroSession {
+  id: ID
+  taskId?: ID
+  startedAt: ISODateTime
+  minutes: number
+}
+
+/** Phrases de la mascotte, avec des codes `{restantes}`… remplacés au moment de parler. */
+export interface MascotLines {
+  idle: string[]
+  clickTodo: string[]
+  clickDone: string[]
+  clickEmpty: string[]
+}
+
+/** Élément de la poubelle, gardé 30 jours. Une catégorie emporte ses sous-catégories et les liens de ses tâches. */
+export interface TrashItem {
+  id: ID
+  kind: 'task' | 'category' | 'subcategory'
+  deletedAt: ISODateTime
+  task?: Task
+  category?: Category
+  subcategories?: Subcategory[]
+  /** Liens des tâches avant la suppression, pour les recréer à la restauration. */
+  links?: TaskLinkSnapshot[]
+}
+
+export interface TaskLinkSnapshot {
+  taskId: ID
+  categoryIds: ID[]
+  primaryCategoryId?: ID
+  subcategoryIds: ID[]
+  primarySubcategoryId?: ID
+}
+
 export interface Settings {
   openFormAfterQuickCreate: boolean
   defaultDurationMin: number
@@ -147,6 +197,11 @@ export interface Settings {
   showPlatformTasks: boolean
   simulateNotionFailure: boolean
   bilanSubcategoryIds: ID[]
+  /** Couleur des tâches : celle de leur catégorie, ou celle de leur quadrant d'Eisenhower. */
+  colorMode: 'category' | 'eisenhower'
+  eisenhowerColors: Record<Quadrant, string>
+  pomodoro: PomodoroSettings
+  mascot: MascotLines
 }
 
 export interface DataState {
@@ -158,6 +213,19 @@ export interface DataState {
   notionSources: NotionSource[]
   views: CalendarView[]
   settings: Settings
+  trash: TrashItem[]
+  pomodoroSessions: PomodoroSession[]
+}
+
+export const DEFAULT_EISENHOWER_COLORS: Record<Quadrant, string> = { q1: '#D44C47', q2: '#337EA9', q3: '#D9730D', q4: '#787774' }
+
+export const DEFAULT_POMODORO: PomodoroSettings = { workMin: 25, shortBreakMin: 5, longBreakMin: 15, cyclesBeforeLong: 4, sound: true }
+
+export const DEFAULT_MASCOT_LINES: MascotLines = {
+  idle: ['Tu gères, {prenom} ! ✨', 'Une petite pause ? ☕', 'Pense à boire de l’eau 💧', 'On avance bien 🐾', 'Coucou ! 👋', 'Je surveille le calendrier 👀', 'Bouh ! 👻'],
+  clickTodo: ['Encore {restantes} chose(s) à faire aujourd’hui 💪', '{faites} sur {total} : continue comme ça !'],
+  clickDone: ['Tout est fait aujourd’hui ! 🎉'],
+  clickEmpty: ['Rien de prévu aujourd’hui 🌿'],
 }
 
 export const EMPTY_FILTERS: CalendarFilters = {

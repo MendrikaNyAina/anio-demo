@@ -18,13 +18,12 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import { addDays, addMinutes, isSameDay } from 'date-fns'
 import { ChevronLeft, ChevronRight, Inbox, Plus } from 'lucide-react'
 import { useMemo, useRef, useState, type MouseEvent } from 'react'
-import { Navigate, useNavigate, useParams } from 'react-router'
+import { Navigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 import { CalendarEntry } from '@/components/CalendarEntry'
-import { PageHeader } from '@/components/PageHeader'
-import { JournalTitle } from '@/components/JournalTitle'
 import { Button } from '@/components/ui/button'
-import { Segmented } from '@/components/ui/controls'
+import { MatrixPage } from './MatrixPage'
+import { ModeSwitch } from './ModeSwitch'
 import { clampToDay, isSingleDay, toKey, type Range } from '@/domain/dates'
 import { buildEntries, type Entry } from '@/domain/entries'
 import type { CalendarMode, Slot } from '@/domain/types'
@@ -37,7 +36,6 @@ import { FiltersBar } from './FiltersBar'
 import { DateJumpPicker } from './DateJumpPicker'
 import { AllDayOverflowPanel, DayNoTimeColumn, UnscheduledPanel } from './Panels'
 import { PeriodProgress } from './PeriodProgress'
-import { PlanningIcon } from './PlanningIcon'
 import { TypeLegend } from './TypeLegend'
 import { ViewTabs } from './ViewTabs'
 
@@ -55,13 +53,13 @@ function slotAt(id: string, start: Date, end: Date | null, allDay: boolean, defa
 
 export function CalendarPage() {
   const { mode: rawMode } = useParams()
+  if (rawMode === 'matrix') return <MatrixPage />
   const mode = MODES.includes(rawMode as CalendarMode) ? (rawMode as CalendarMode) : null
   if (!mode) return <Navigate to="/calendar/week" replace />
   return <CalendarScreen key={mode} mode={mode} />
 }
 
 function CalendarScreen({ mode }: { mode: CalendarMode }) {
-  const navigate = useNavigate()
   const data = useApp((s) => s.data)
   const prefs = useApp((s) => s.prefs)
   const app = useApp.getState()
@@ -200,7 +198,7 @@ function CalendarScreen({ mode }: { mode: CalendarMode }) {
   const cancelQuick = (entry: Entry) => {
     ui.set({ editingKey: null })
     if (entry.eventId) app.deleteEvent(entry.eventId)
-    else if (entry.taskId) app.deleteTask(entry.taskId)
+    else if (entry.taskId) app.deleteTask(entry.taskId, { permanent: true })
   }
 
   // ── Rendu ────────────────────────────────────────────────────
@@ -256,17 +254,7 @@ function CalendarScreen({ mode }: { mode: CalendarMode }) {
   const toggleUnscheduled = () => app.updateView(view.id, { unscheduledOpen: !unscheduledOpen })
 
   // Morceaux de l'en-tête, placés différemment selon le thème.
-  const modeSwitch = (
-    <Segmented
-      value={mode}
-      onChange={(m) => navigate(`/calendar/${m}`)}
-      options={[
-        { value: 'month', label: 'Mois' },
-        { value: 'week', label: 'Semaine' },
-        { value: 'day', label: 'Jour' },
-      ]}
-    />
-  )
+  const modeSwitch = <ModeSwitch value={mode} />
   const unscheduledButton = journal ? (
     <button
       type="button"
@@ -317,15 +305,7 @@ function CalendarScreen({ mode }: { mode: CalendarMode }) {
     <div className="flex h-full flex-col max-md:overflow-y-auto">
       {journal ? (
         <>
-          <div className="px-4 pt-4 sm:px-6 sm:pt-6">
-            <JournalTitle
-              icon={<PlanningIcon />}
-              tab="mon calendrier"
-              title="Mon planning"
-              className="mb-4"
-              actions={headerActions}
-            />
-          </div>
+          <div className="flex justify-end px-4 pt-4 pb-3 sm:px-6">{headerActions}</div>
 
           <ViewTabs mode={mode} active={view} />
 
@@ -339,9 +319,7 @@ function CalendarScreen({ mode }: { mode: CalendarMode }) {
         </>
       ) : (
         <>
-          <div className="px-4 pt-6 sm:px-8">
-            <PageHeader icon="📅" title="Mon planning" className="mb-3" actions={headerActions} />
-          </div>
+          <div className="flex justify-end px-4 pt-4 pb-2 sm:px-8">{headerActions}</div>
 
           <div className="pl-2 sm:pl-8">
             <ViewTabs mode={mode} active={view} />

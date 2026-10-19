@@ -19,7 +19,18 @@ export const PALETTE: { name: string; value: string }[] = [
   { name: 'Encre', value: '#37352F' },
 ]
 
-export const isHex = (value: string) => /^#[0-9a-fA-F]{6}$/.test(value)
+/** Les 7 couleurs proposées en premier dans les choix de couleur (la roue reste disponible). */
+export const PRESET_COLORS: { name: string; value: string }[] = [
+  { name: 'Rouge', value: '#D44C47' },
+  { name: 'Orange', value: '#D9730D' },
+  { name: 'Jaune', value: '#CB912F' },
+  { name: 'Vert', value: '#448361' },
+  { name: 'Bleu', value: '#337EA9' },
+  { name: 'Violet', value: '#9065B0' },
+  { name: 'Rose', value: '#C14C8A' },
+]
+
+export const isHex =(value: string) => /^#[0-9a-fA-F]{6}$/.test(value)
 
 /** Une icône SVG peut prendre la couleur de sa catégorie (voir IconView). */
 export const isSvgDataUrl = (dataUrl: string) => dataUrl.startsWith('data:image/svg+xml')

@@ -2,13 +2,15 @@ import { Calendar, CheckSquare, ExternalLink, MoreHorizontal, Plus, Shapes, Tras
 import { useMemo, useState } from 'react'
 import { KIND_LABEL, taskDisplayRange } from '@/domain/display'
 import { buildLookup } from '@/domain/lookup'
+import { taskProgress } from '@/domain/progress'
 import { resolveTaskStyle } from '@/domain/style'
 import type { Task } from '@/domain/types'
 import { cn, newId } from '@/lib/utils'
-import { useApp, withUndo } from '@/store/appStore'
+import { useApp, useTheme, withUndo } from '@/store/appStore'
 import { ui, useUi, type TaskDraft } from '@/store/uiStore'
 import { InlineEditableText } from './InlineEditableText'
 import { PeekControls, PeekShell } from './PeekShell'
+import { percent, ProgressBar } from './ProgressBar'
 import { RichEditor } from './RichEditor'
 import { scheduleError, TaskPropertyFields } from './TaskFields'
 import { TypeIndicator } from './TypeIndicator'
@@ -38,10 +40,14 @@ function PeekBody({ task, onClose }: { task: Task; onClose: () => void }) {
   const data = useApp((s) => s.data)
   const updateTask = useApp((s) => s.updateTask)
   const toggleTaskDone = useApp((s) => s.toggleTaskDone)
+  const toggleSlotDone = useApp((s) => s.toggleSlotDone)
   const editingKey = useUi((s) => s.editingKey)
+  const journal = useTheme() === 'journal'
   const lookup = useMemo(() => buildLookup(data), [data])
   const isNotion = !!task.source
   const style = isNotion ? null : resolveTaskStyle(task, lookup)
+  // Sous-tâches, à défaut créneaux cochés d'une tâche étalée.
+  const progress = task.kind === 'habit' ? null : taskProgress(task, style?.color ?? '#8C92E8')
   const firstCategory = task.categoryIds.map((id) => lookup.categories.get(id)).find(Boolean)
 
   // Dates en cours de saisie mais invalides (fin avant début, aucun jour…) : affichées avec leur erreur,
@@ -71,7 +77,7 @@ function PeekBody({ task, onClose }: { task: Task; onClose: () => void }) {
       hint: isNotion ? 'dans Notion' : undefined,
       onSelect: () => {
         onClose()
-        withUndo('Tâche supprimée', () => useApp.getState().deleteTask(task.id))
+        withUndo('Tâche mise à la poubelle', () => useApp.getState().deleteTask(task.id))
       },
     },
   ])
@@ -96,6 +102,14 @@ function PeekBody({ task, onClose }: { task: Task; onClose: () => void }) {
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-10 pt-8 pb-16">
+        {progress && (
+          <div className="mb-3 flex items-center gap-3">
+            <ProgressBar progress={progress} className="flex-1" />
+            <span className={cn('shrink-0 text-xs tabular-nums', journal ? 'font-plate font-semibold text-[#5B57A6]' : 'text-ink-2')}>
+              {progress.done} / {progress.total} {progress.unit === 'subtasks' ? 'sous-tâches' : 'créneaux'} · {percent(progress)} %
+            </span>
+          </div>
+        )}
         <div className="mb-4 flex items-start gap-3">
           {task.kind !== 'habit' && <Checkbox checked={task.done} onChange={() => toggleTaskDone(task.id)} className="mt-2.5 size-5" label="Fait" />}
           <InlineEditableText
@@ -122,7 +136,22 @@ function PeekBody({ task, onClose }: { task: Task; onClose: () => void }) {
             </PropertyRow>
           </>
         ) : (
-          <TaskPropertyFields value={value} onChange={change} typeIcon={<TypeIndicator type={task.kind} icon={style?.icon} color={style?.color} size={16} />} />
+          <TaskPropertyFields
+            value={value}
+            onChange={change}
+            typeIcon={<TypeIndicator type={task.kind} icon={style?.icon} color={style?.color} size={16} />}
+            onToggleSlot={(slotId) => toggleSlotDone(task.id, slotId)}
+            onConvertToHabit={() =>
+              ui.confirm({
+                title: 'Transformer en habitude ?',
+                message: task.slots[0]
+                  ? 'Elle se répétera chaque semaine le même jour (et à la même heure) que sa date actuelle. Tu pourras changer les jours ensuite.'
+                  : 'Elle se répétera tous les jours à partir d’aujourd’hui. Tu pourras changer les jours ensuite.',
+                confirmLabel: 'Transformer',
+                onConfirm: () => useApp.getState().convertToHabit(task.id),
+              })
+            }
+          />
         )}
 
         <div className="mt-6 border-t border-line pt-4">

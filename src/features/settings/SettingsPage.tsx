@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button'
 import { inputClass, Segmented, Switch } from '@/components/ui/controls'
 import { Popover } from '@/components/ui/popover'
 import { fmtDuration } from '@/domain/display'
+import { QUADRANTS } from '@/domain/eisenhower'
 import type { Progress } from '@/domain/progress'
+import { DEFAULT_EISENHOWER_COLORS } from '@/domain/types'
 import { Page } from '@/features/layout/AppShell'
 import { cn } from '@/lib/utils'
 import { useApp } from '@/store/appStore'
@@ -55,6 +57,29 @@ export function SettingsPage() {
         </Setting>
         <Setting label="Nouvel événement">
           <ColorSetting color={settings.defaultEventColor} onChange={(c) => update({ defaultEventColor: c })} dotted />
+        </Setting>
+      </Section>
+
+      <Section title="Couleur des tâches">
+        <Setting label="Colorer les tâches selon…" hint="Leur catégorie / sous-catégorie, ou leur place dans la matrice d'Eisenhower (urgence × importance). Les habitudes gardent la couleur de leur catégorie.">
+          <Segmented
+            value={settings.colorMode}
+            onChange={(colorMode) => update({ colorMode })}
+            options={[
+              { value: 'category', label: 'Catégories' },
+              { value: 'eisenhower', label: 'Eisenhower' },
+            ]}
+          />
+        </Setting>
+        {QUADRANTS.map((q) => (
+          <Setting key={q.id} label={q.title} hint={settings.colorMode === 'category' ? 'Utilisée par la vue Matrice du calendrier.' : undefined}>
+            <ColorSetting color={settings.eisenhowerColors[q.id]} onChange={(c) => update({ eisenhowerColors: { ...settings.eisenhowerColors, [q.id]: c } })} />
+          </Setting>
+        ))}
+        <Setting label="Couleurs d'origine" hint="Rouge, bleu, orange et gris.">
+          <Button variant="outline" onClick={() => update({ eisenhowerColors: { ...DEFAULT_EISENHOWER_COLORS } })}>
+            <RotateCcw size={14} /> Rétablir
+          </Button>
         </Setting>
       </Section>
 

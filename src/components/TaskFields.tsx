@@ -1,7 +1,7 @@
 import { addDays } from 'date-fns'
-import { Calendar, CheckSquare, Flag, Layers, Plus, Repeat, Shapes } from 'lucide-react'
+import { Calendar, CheckSquare, Flag, Layers, Plus, Repeat, Shapes, Siren } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { fmtDay, fmtDuration, KIND_LABEL } from '@/domain/display'
+import { fmtDay, fmtDuration, KIND_LABEL, PRIORITY_COLOR, PRIORITY_LABEL } from '@/domain/display'
 import { fromKey, slotBounds, toKey } from '@/domain/dates'
 import { nextHabitDates } from '@/domain/habits'
 import type { Priority, Recurrence, Slot } from '@/domain/types'
@@ -11,7 +11,8 @@ import type { TaskDraft } from '@/store/uiStore'
 import { CategoryMultiSelect } from './CategoryMultiSelect'
 import { SlotEditor, slotError } from './SlotEditor'
 import { Button } from './ui/button'
-import { Checkbox, inputClass, PropertyRow, Segmented } from './ui/controls'
+import { Checkbox, inputClass, PropertyRow } from './ui/controls'
+import { TagSelect, type TagOption } from './ui/TagSelect'
 
 // Propriétés d'une tâche, partagées par le formulaire de création et la page de la tâche (où elles s'éditent en direct).
 
@@ -24,6 +25,15 @@ const WEEKDAYS = [
   { n: 6, short: 'S', long: 'Samedi' },
   { n: 7, short: 'D', long: 'Dimanche' },
 ]
+
+const URGENCY_OPTIONS: TagOption<'yes' | 'no'>[] = [
+  { value: 'yes', label: 'Urgent', color: '#D44C47' },
+  { value: 'no', label: 'Pas urgent', color: '#787774' },
+]
+
+const PRIORITY_OPTIONS: TagOption<Priority>[] = (['high', 'medium', 'low'] as const).map((p) => ({ value: p, label: PRIORITY_LABEL[p], color: PRIORITY_COLOR[p] }))
+
+const fmtDoneAt =(iso: string) => new Date(iso).toLocaleString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
 
 /** Erreur des dates d'une tâche (créneaux ou récurrence), `null` si tout est valide. */
 export function scheduleError(draft: Pick<TaskDraft, 'kind' | 'slots' | 'recurrence'>): string | null {
@@ -48,11 +58,28 @@ function nextSlot(slots: Slot[]): Slot {
   return { id: newId(), allDay: false, start: addDays(new Date(last.start), 1).toISOString(), end: addDays(new Date(last.end), 1).toISOString() }
 }
 
-/** Type, statut, priorité, catégories et dates (calendrier.md l. 42). */
-export function TaskPropertyFields({ value, onChange, typeIcon }: { value: TaskDraft; onChange: (patch: Partial<TaskDraft>) => void; typeIcon?: ReactNode }) {
+/**
+ * Type, statut, priorité, urgence, importance, catégories et dates (calendrier.md l. 42).
+ * Dans la page d'une tâche existante : `onToggleSlot` (cocher un créneau d'une tâche étalée)
+ * et `onConvertToHabit` (tâche simple → habitude).
+ */
+export function TaskPropertyFields({
+  value,
+  onChange,
+  typeIcon,
+  onToggleSlot,
+  onConvertToHabit,
+}: {
+  value: TaskDraft
+  onChange: (patch: Partial<TaskDraft>) => void
+  typeIcon?: ReactNode
+  onToggleSlot?: (slotId: string) => void
+  onConvertToHabit?: () => void
+}) {
   const durationMin = useApp((s) => s.data.settings.defaultDurationMin)
   const error = scheduleError(value)
   const habitError = value.kind === 'habit' ? error : null
+  const checkSlots = value.kind === 'spread' && !!onToggleSlot
 
   return (
     <>
@@ -67,29 +94,40 @@ export function TaskPropertyFields({ value, onChange, typeIcon }: { value: TaskD
               <Layers size={13} /> Transformer en tâche étalée
             </Button>
           )}
+          {value.kind === 'simple' && onConvertToHabit && (
+            <Button size="sm" variant="outline" onClick={onConvertToHabit}>
+              <Repeat size={13} /> Transformer en habitude
+            </Button>
+          )}
         </div>
       </PropertyRow>
 
       {value.kind !== 'habit' && (
         <PropertyRow label="Statut" icon={<CheckSquare />}>
-          <label className="flex items-center gap-2 pt-1 text-sm">
-            <Checkbox checked={value.done} onChange={(done) => onChange({ done })} />
-            {value.done ? 'Fait' : 'À faire'}
-          </label>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-sm">
+            <label className="flex items-center gap-2">
+              <Checkbox checked={value.done} onChange={(done) => onChange({ done })} />
+              {value.done ? 'Fait' : 'À faire'}
+            </label>
+            {value.done && value.doneAt && <span className="text-xs text-ink-3">terminée le {fmtDoneAt(value.doneAt)}</span>}
+          </div>
+        </PropertyRow>
+      )}
+
+      {/* Urgence × priorité placent la tâche dans la matrice d'Eisenhower (priorité haute ou moyenne = importante). */}
+      {value.kind !== 'habit' && (
+        <PropertyRow label="Urgence" icon={<Siren />}>
+          <TagSelect<'yes' | 'no'>
+            label="Urgence"
+            value={value.urgent === undefined ? undefined : value.urgent ? 'yes' : 'no'}
+            onChange={(v) => onChange({ urgent: v === undefined ? undefined : v === 'yes' })}
+            options={URGENCY_OPTIONS}
+          />
         </PropertyRow>
       )}
 
       <PropertyRow label="Priorité" icon={<Flag />}>
-        <Segmented<Priority | 'none'>
-          value={value.priority ?? 'none'}
-          onChange={(v) => onChange({ priority: v === 'none' ? undefined : v })}
-          options={[
-            { value: 'none', label: 'Aucune' },
-            { value: 'low', label: 'Basse' },
-            { value: 'medium', label: 'Moyenne' },
-            { value: 'high', label: 'Haute' },
-          ]}
-        />
+        <TagSelect<Priority> label="Priorité" value={value.priority} onChange={(priority) => onChange({ priority })} options={PRIORITY_OPTIONS} />
       </PropertyRow>
 
       <CategoryMultiSelect value={value} onChange={(links) => onChange(links)} />
@@ -99,16 +137,31 @@ export function TaskPropertyFields({ value, onChange, typeIcon }: { value: TaskD
           <HabitEditor recurrence={value.recurrence!} onChange={(recurrence) => onChange({ recurrence })} />
         ) : (
           <div className="space-y-2">
-            {value.slots.map((slot) => (
-              <SlotEditor
-                key={slot.id}
-                slot={slot}
-                singleDay
-                durationMin={durationMin}
-                onChange={(next) => onChange({ slots: value.slots.map((s) => (s.id === slot.id ? next : s)) })}
-                onRemove={() => onChange({ slots: value.slots.filter((s) => s.id !== slot.id) })}
-              />
-            ))}
+            {value.slots.map((slot) => {
+              const editor = (
+                <SlotEditor
+                  key={slot.id}
+                  slot={slot}
+                  singleDay
+                  durationMin={durationMin}
+                  onChange={(next) => onChange({ slots: value.slots.map((s) => (s.id === slot.id ? { ...next, done: slot.done } : s)) })}
+                  onRemove={() => onChange({ slots: value.slots.filter((s) => s.id !== slot.id) })}
+                />
+              )
+              if (!checkSlots) return editor
+              // Tâche étalée : chaque créneau se coche ; la tâche est faite quand ils le sont tous.
+              return (
+                <div key={slot.id} className={cn('flex items-start gap-2', slot.done && 'opacity-60')}>
+                  <Checkbox checked={!!slot.done} onChange={() => onToggleSlot!(slot.id)} label="Créneau fait" className="mt-2" />
+                  <div className="min-w-0 flex-1">{editor}</div>
+                </div>
+              )
+            })}
+            {checkSlots && value.slots.length > 0 && (
+              <p className="text-xs text-ink-3">
+                {value.slots.filter((s) => s.done).length} / {value.slots.length} créneaux faits · la tâche est terminée quand tous sont cochés.
+              </p>
+            )}
             {(value.kind === 'spread' || value.slots.length === 0) && (
               <Button size="sm" variant="subtle" onClick={() => onChange({ slots: [...value.slots, nextSlot(value.slots)] })}>
                 <Plus size={14} /> {value.kind === 'spread' ? 'Ajouter un créneau' : 'Ajouter une date'}

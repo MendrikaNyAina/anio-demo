@@ -5,6 +5,7 @@ import { GlobalDialogs } from '@/components/GlobalDialogs'
 import { useIsMobile } from '@/lib/useMediaQuery'
 import { cn } from '@/lib/utils'
 import { useApp, useTheme } from '@/store/appStore'
+import { usePomodoroEngine } from '@/store/pomodoroStore'
 import { Mascot } from './Mascot'
 import { Sidebar } from './Sidebar'
 import { SidebarRail } from './SidebarRail'
@@ -15,6 +16,7 @@ export function AppShell() {
   const setPrefs = useApp((s) => s.setPrefs)
   const theme = useTheme()
   const isMobile = useIsMobile()
+  usePomodoroEngine()
   // Téléphone : le menu est un tiroir, fermé par défaut et refermé à chaque changement de page.
   const [navOpen, setNavOpen] = useState(false)
   const { pathname } = useLocation()

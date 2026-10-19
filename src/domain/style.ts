@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { quadrantOf } from './eisenhower'
 import type { Lookup } from './lookup'
 import type { IconRef, StyleTarget, Task } from './types'
 
@@ -9,14 +10,25 @@ export interface ResolvedStyle {
   icon?: IconRef
 }
 
+/** Couleur d'une tâche pas encore classée, en mode « couleurs d'Eisenhower ». */
+const UNCLASSIFIED = '#B4B3AF'
+
 /**
  * Style d'une tâche (calendrier.md l. 29) :
  * sous-catégorie principale, à défaut catégorie principale, à défaut aucun style (« Autre »).
+ * Réglage « couleurs d'Eisenhower » : la couleur vient du quadrant (les habitudes gardent celle de leur catégorie).
  */
 export function resolveTaskStyle(
-  task: Pick<Task, 'primaryCategoryId' | 'primarySubcategoryId'>,
+  task: Pick<Task, 'primaryCategoryId' | 'primarySubcategoryId'> & Partial<Pick<Task, 'kind' | 'urgent' | 'priority'>>,
   lookup: Lookup,
 ): ResolvedStyle | null {
+  const base = categoryStyle(task, lookup)
+  if (lookup.colors?.colorMode !== 'eisenhower' || task.kind === 'habit') return base
+  const q = quadrantOf(task)
+  return { color: q ? lookup.colors.eisenhowerColors[q] : UNCLASSIFIED, target: base?.target ?? 'background', icon: base?.icon }
+}
+
+function categoryStyle(task: Pick<Task, 'primaryCategoryId' | 'primarySubcategoryId'>, lookup: Lookup): ResolvedStyle | null {
   const sub = task.primarySubcategoryId ? lookup.subcategories.get(task.primarySubcategoryId) : undefined
   if (sub) return { color: sub.color, target: sub.styleTarget, icon: sub.icon ?? lookup.categories.get(sub.categoryId)?.icon }
   const cat = task.primaryCategoryId ? lookup.categories.get(task.primaryCategoryId) : undefined

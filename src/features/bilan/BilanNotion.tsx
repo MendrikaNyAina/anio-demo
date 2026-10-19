@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 import { Page } from '@/features/layout/AppShell'
 import { openEntry, toggleEntryDone } from '@/store/entryActions'
 import { ui } from '@/store/uiStore'
+import { CompletionCurve, StatsGrid, useGlobalStats } from './GlobalStats'
 
 /** Bilan du thème Notion : mêmes informations que la version journal, en page sobre (listes et lignes). */
 export function BilanNotion({
@@ -35,6 +36,7 @@ export function BilanNotion({
   onAddTask: () => void
 }) {
   const navigate = useNavigate()
+  const stats = useGlobalStats()
 
   return (
     <Page>
@@ -91,6 +93,13 @@ export function BilanNotion({
             <span className="text-ink-2">· {deadlineLabel(nextDeadline.deadline!, nextDeadline.deadlineHasTime).text}</span>
           </div>
         )}
+      </Section>
+
+      <Section title="Statistiques">
+        <div className="space-y-6 pt-2">
+          <StatsGrid stats={stats} />
+          <CompletionCurve curve={stats.curve} />
+        </div>
       </Section>
 
       <Section title={`Tâches du jour (${today.length})`}>

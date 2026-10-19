@@ -25,7 +25,7 @@ export function confirmDelete(kind: 'category' | 'subcategory', item: Category |
     kind === 'category'
       ? {
           title: `Supprimer « ${item.name} » ?`,
-          message: `Ses ${subCount} sous-catégories seront supprimées. Les tâches restent : sans autre catégorie, elles passeront dans « Autre ».`,
+          message: `Elle part dans la poubelle avec ses ${subCount} sous-catégories (restaurables pendant 30 jours). Les tâches restent : sans autre catégorie, elles passeront dans « Autre ».`,
           confirmLabel: 'Supprimer',
           onConfirm: () => {
             after?.()
@@ -34,7 +34,7 @@ export function confirmDelete(kind: 'category' | 'subcategory', item: Category |
         }
       : {
           title: `Supprimer « ${item.name} » ?`,
-          message: 'Les tâches restent dans la catégorie, dans la sous-catégorie « Autre ».',
+          message: 'Elle part dans la poubelle (restaurable pendant 30 jours). Les tâches restent dans la catégorie, dans la sous-catégorie « Autre ».',
           confirmLabel: 'Supprimer',
           onConfirm: () => {
             after?.()
@@ -83,7 +83,7 @@ export function ItemName({
       placeholder={kind === 'category' ? 'Nouvelle catégorie' : 'Nouvelle sous-catégorie'}
       onEnd={() => ui.set({ editingKey: null })}
       onSave={(name) => (kind === 'category' ? app.updateCategory(item.id, { name }) : app.updateSubcategory(item.id, { name }))}
-      onCancel={() => (kind === 'category' ? app.deleteCategory(item.id) : app.deleteSubcategory(item.id))}
+      onCancel={() => (kind === 'category' ? app.deleteCategory(item.id, { permanent: true }) : app.deleteSubcategory(item.id, { permanent: true }))}
       className={className}
       inputClassName={inputClassName ?? className}
     />

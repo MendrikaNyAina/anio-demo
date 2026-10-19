@@ -1,6 +1,9 @@
 import { addDays, startOfMonth, startOfWeek, subMinutes } from 'date-fns'
 import { atTime, fromKey, isoDay, toKey } from '@/domain/dates'
 import {
+  DEFAULT_EISENHOWER_COLORS,
+  DEFAULT_MASCOT_LINES,
+  DEFAULT_POMODORO,
   EMPTY_FILTERS,
   type CalendarEvent,
   type CalendarView,
@@ -136,6 +139,7 @@ export function createSeed(now = new Date()): DataState {
     task({ title: 'Choisir la palette de couleurs', ...inSub(portfolio), slots: [allDay(0)], done: true }),
     task({
       title: 'Créer les visuels des pages',
+      urgent: false,
       kind: 'spread',
       priority: 'high',
       ...inSub(portfolio),
@@ -161,7 +165,7 @@ export function createSeed(now = new Date()): DataState {
         ],
       },
     }),
-    task({ title: 'Intégrer la galerie', ...inSub(portfolio), slots: [timed(4, '10:00', '12:30')] }),
+    task({ title: 'Intégrer la galerie', ...inSub(portfolio), slots: [timed(4, '10:00', '12:30')], urgent: false, priority: 'medium' }),
     task({ title: 'Optimiser les images', ...inSub(portfolio), priority: 'low' }),
 
     // Shifterra (dont une tâche multi-catégories)
@@ -175,25 +179,25 @@ export function createSeed(now = new Date()): DataState {
       priority: 'high',
     }),
     task({ title: "Écrire la doc de l'API", ...inSub(shifterra), priority: 'low' }),
-    task({ title: 'Préparer la présentation', ...inSub(shifterra), slots: [allDay(4)], priority: 'high' }),
+    task({ title: 'Préparer la présentation', ...inSub(shifterra), slots: [allDay(4)], priority: 'high', urgent: true }),
     task({ title: 'Revue de code', ...inSub(shifterra), slots: [timed(2, '09:00', '10:00')], done: true }),
     task({ title: 'Sprint Shifterra', kind: 'spread', ...inSub(shifterra), slots: [allDay(-4), allDay(-3), allDay(7), allDay(8)] }),
 
     // Dessin
     task({ title: 'Peindre le portrait de Lova', kind: 'spread', ...inSub(painting), slots: [timed(5, '10:00', '13:00'), timed(6, '14:00', '17:00')] }),
     task({ title: 'Étude de lumière', ...inSub(painting), slots: [allDay(2)] }),
-    task({ title: 'Croquis au café', ...inSub(croquis), slots: [timed(3, '17:30', '18:30')] }),
+    task({ title: 'Croquis au café', ...inSub(croquis), slots: [timed(3, '17:30', '18:30')], urgent: false, priority: 'low' }),
     task({ title: 'Commander un nouveau stylet', ...inCat(dessin), priority: 'medium' }),
 
     // Perso
     task({ title: 'Courses de la semaine', ...inSub(maison) }),
-    task({ title: 'Arroser les plantes', ...inSub(maison), slots: [allDay(2)] }),
-    task({ title: 'Payer la facture internet', ...inSub(maison), slots: [allDay(2)], priority: 'high' }),
+    task({ title: 'Arroser les plantes', ...inSub(maison), slots: [allDay(2)], urgent: true, priority: 'low' }),
+    task({ title: 'Payer la facture internet', ...inSub(maison), slots: [allDay(2)], priority: 'high', urgent: true }),
     task({ title: 'Grand ménage', ...inSub(maison), slots: [timed(5, '09:00', '10:30')] }),
     task({ title: 'Envoyer le devis du plombier', ...inCat(perso), slots: [allDay(2)] }),
 
     // Sans catégorie → « Autre »
-    task({ title: 'Appeler le plombier', slots: [allDay(2)] }),
+    task({ title: 'Appeler le plombier', slots: [allDay(2)], urgent: true, priority: 'low' }),
     task({ title: 'Lire 30 pages', slots: [allDay(1)], done: true }),
     task({ title: 'Préparer le rendez-vous à la banque' }),
 
@@ -233,6 +237,15 @@ export function createSeed(now = new Date()): DataState {
   for (let i = 0; i < 26; i++) {
     const start = -460 + i * 14
     tasks.push(habit(`Défi 30 jours · ${challenges[i % challenges.length]}`, challengeSubs[i % challengeSubs.length], { weekdays: daily, startDate: key(start), endDate: key(start + 29), durationMin: 15 }, 8 + i))
+  }
+
+  // Date de fin des tâches faites : le jour de leur créneau (sinon la veille), pour la courbe du Bilan.
+  for (const t of tasks) {
+    if (t.kind === 'habit' || !t.done) continue
+    const first = t.slots[0]
+    const day = first ? (first.allDay ? first.startsOn : toKey(new Date(first.start))) : toKey(addDays(now, -1))
+    t.doneAt = atTime(day, '18:00').toISOString()
+    if (t.kind === 'spread') for (const s of t.slots) s.done = true
   }
 
   const event = (title: string, color: string, slot: Slot): CalendarEvent => ({ id: newId(), title, color, slot })
@@ -284,6 +297,12 @@ export function createSeed(now = new Date()): DataState {
       showPlatformTasks: true,
       simulateNotionFailure: false,
       bilanSubcategoryIds: [portfolio.id, shifterra.id, ikaly.id],
+      colorMode: 'category',
+      eisenhowerColors: { ...DEFAULT_EISENHOWER_COLORS },
+      pomodoro: { ...DEFAULT_POMODORO },
+      mascot: structuredClone(DEFAULT_MASCOT_LINES),
     },
+    trash: [],
+    pomodoroSessions: [],
   }
 }

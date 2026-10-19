@@ -27,6 +27,13 @@ Prérequis : Node 20.11+ (Vite est fixé en v6 pour rester compatible avec cette
 - **Notion** (simulé) : « Intégrer une base Notion » en bas du menu du calendrier ;
   Paramètres → « Simuler une erreur réseau Notion » pour voir le retour arrière.
 - **Paramètres** : comparer l'état coché « Ternie / Hachurée » et l'ouverture des tâches « Panneau / Fenêtre ».
+- **Matrice** (Calendrier → Matrice) : tâches de la période (jour / semaine / mois) par urgence × importance,
+  à glisser d'un quadrant à l'autre ; les tâches non classées attendent dans « À classer ».
+- **Pomodoro** : minuteur concentration / pauses, tâche liée, compteur du jour ; il continue en changeant de page.
+- **Mascotte** : phrases personnalisables avec des codes (`{restantes}`, `{prenom}`…).
+- **Poubelle** : tâches et catégories supprimées, restaurables pendant 30 jours.
+- Catégories → **Style des tâches** : label / fond / bordure pour toutes les catégories d'un coup.
+- Paramètres → **Couleur des tâches** : par catégorie ou par quadrant d'Eisenhower (4 couleurs).
 - Menu du compte (en haut à gauche) → **Réinitialiser la démo** pour revenir aux données de départ.
 
 ## Organisation du code

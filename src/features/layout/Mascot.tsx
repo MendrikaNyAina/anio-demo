@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { dayRange } from '@/domain/dates'
-import { buildEntries } from '@/domain/entries'
+import { clickSituation, fillTemplate, mascotContext, randomLine } from '@/domain/mascot'
+import { DEFAULT_MASCOT_LINES } from '@/domain/types'
 import { useIsMobile } from '@/lib/useMediaQuery'
 import { cn } from '@/lib/utils'
 import { useApp, useTheme } from '@/store/appStore'
 
-const IDLE_LINES = ['Tu gères ! ✨', 'Une petite pause ? ☕', 'Pense à boire de l’eau 💧', 'On avance bien 🐾', 'Coucou ! 👋', 'Je surveille le calendrier 👀', 'Bouh ! 👻']
+const currentContext = () => {
+  const { data, session } = useApp.getState()
+  return mascotContext(data, session?.name ?? '')
+}
 /** Vitesse de vol (px / s) : lente, c'est un fantôme. */
 const SPEED = 60
 /** Temps de survol avant que le fantôme s'éloigne, pour ne jamais rester sur ce qu'on veut cliquer. */
@@ -81,7 +84,10 @@ export function Mascot() {
       timer.current = setTimeout(() => {
         setTilt(0)
         const roll = Math.random()
-        if (roll < 0.3) say(IDLE_LINES[Math.floor(Math.random() * IDLE_LINES.length)])
+        if (roll < 0.3) {
+          const line = randomLine(useApp.getState().data.settings.mascot?.idle ?? DEFAULT_MASCOT_LINES.idle)
+          if (line) say(fillTemplate(line, currentContext()))
+        }
         else if (roll < 0.45) setMood('sleepy')
         timer.current = setTimeout(wander, 2500 + Math.random() * 5000)
       }, ms)
@@ -113,11 +119,12 @@ export function Mascot() {
 
   const onClick = () => {
     clearTimeout(fleeTimer.current)
-    const data = useApp.getState().data
-    const today = buildEntries(data, { range: dayRange(new Date()), respectSwitches: false }).filter((e) => e.done !== undefined)
-    const left = today.filter((e) => !e.done).length
+    // Phrases personnalisables (page Mascotte), choisies selon l'avancement du jour.
+    const ctx = currentContext()
+    const situation = clickSituation(ctx)
+    const line = randomLine(useApp.getState().data.settings.mascot?.[situation] ?? []) ?? randomLine(DEFAULT_MASCOT_LINES[situation])!
     setMood('happy')
-    say(today.length === 0 ? 'Rien de prévu aujourd’hui 🌿' : left === 0 ? 'Tout est fait aujourd’hui ! 🎉' : `Encore ${left} chose${left > 1 ? 's' : ''} à faire aujourd’hui 💪`)
+    say(fillTemplate(line, ctx))
     fleeTimer.current = setTimeout(() => wanderRef.current(), 3200)
   }
 
@@ -161,7 +168,7 @@ export function Mascot() {
 }
 
 /** Petit chat fantôme lavande (dessin original), avec ses quatre humeurs. */
-function GhostCat({ mood, facing }: { mood: Mood; facing: 1 | -1 }) {
+export function GhostCat({ mood, facing }: { mood: Mood; facing: 1 | -1 }) {
   const ink = '#2F2B6E'
   return (
     <svg

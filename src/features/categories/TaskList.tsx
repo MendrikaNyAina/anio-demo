@@ -137,7 +137,7 @@ function useTaskRow(task: Task) {
   const app = useApp.getState()
 
   // Depuis la page Catégories, on supprime toujours toute la tâche / toute l'habitude (décisions 3 et 4).
-  const remove = () => withUndo(task.kind === 'habit' ? 'Habitude supprimée' : 'Tâche supprimée', () => app.deleteTask(task.id))
+  const remove = () => withUndo(task.kind === 'habit' ? 'Habitude mise à la poubelle' : 'Tâche mise à la poubelle', () => app.deleteTask(task.id))
 
   const menu = useActionMenu([
     { label: 'Ouvrir', icon: <ExternalLink />, onSelect: () => ui.openPeek(task.id) },
@@ -157,7 +157,7 @@ function useTaskRow(task: Task) {
       }}
       onCancel={() => {
         ui.set({ editingKey: null })
-        app.deleteTask(task.id)
+        app.deleteTask(task.id, { permanent: true })
       }}
       inputClassName={inputClassName}
     />

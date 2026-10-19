@@ -20,6 +20,7 @@ import { openEntry, toggleEntryDone } from '@/store/entryActions'
 import { emptyDraft, ui } from '@/store/uiStore'
 import { DashedAdd } from '@/features/categories/shared'
 import { BilanNotion } from './BilanNotion'
+import { CompletionCurve, StatsGrid, useGlobalStats } from './GlobalStats'
 
 // Page Bilan (calendrier.md l. 87-91). Thème journal : même univers que la page Habitudes
 // (titre en étiquette, cartes lavande à ombre décalée, Fredoka) ; thème Notion : BilanNotion.
@@ -48,6 +49,7 @@ export function BilanPage() {
   const progress = weekProgress(today)
   const events = today.filter((e) => e.type === 'event').length
   const projects = projectProgress(data, data.settings.bilanSubcategoryIds)
+  const stats = useGlobalStats()
 
   // Prochaine deadline parmi tous les projets (pas seulement ceux suivis).
   const nextDeadline = useMemo(() => {
@@ -108,6 +110,13 @@ export function BilanPage() {
             </PanelCard>
 
             {nextDeadline && <NextDeadline subcategory={nextDeadline} />}
+
+            <PanelCard title="Statistiques">
+              <div className="space-y-5 pb-1">
+                <StatsGrid stats={stats} />
+                <CompletionCurve curve={stats.curve} />
+              </div>
+            </PanelCard>
           </div>
 
           <aside className="flex max-w-[520px] min-w-0 flex-[1_1_380px] flex-col gap-5 sm:min-w-[300px] xl:sticky xl:top-4">

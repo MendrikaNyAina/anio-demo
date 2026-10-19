@@ -1,13 +1,15 @@
-import { Plus } from 'lucide-react'
-import { useMemo } from 'react'
-import { JournalTitle } from '@/components/JournalTitle'
+import { Paintbrush, Plus } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { StyleTargetChoice } from '@/components/ColorPicker'
+import { journalMenuClass, JournalTitle } from '@/components/JournalTitle'
 import { PageHeader } from '@/components/PageHeader'
 import { Button } from '@/components/ui/button'
 import { Segmented } from '@/components/ui/controls'
+import { Popover } from '@/components/ui/popover'
 import { groupForCategoryPage } from '@/domain/grouping'
-import { OTHER } from '@/domain/types'
+import { OTHER, type StyleTarget } from '@/domain/types'
 import { cn } from '@/lib/utils'
-import { useApp, useTheme } from '@/store/appStore'
+import { useApp, useTheme, withUndo } from '@/store/appStore'
 import { ui } from '@/store/uiStore'
 import { NotionLayout } from './NotionLayout'
 import { PixelLayout } from './PixelLayout'
@@ -49,6 +51,7 @@ export function CategoriesPage() {
         <span className="text-xs text-ink-2">Affichage</span>
         <Segmented value={layout} onChange={(categoriesLayout) => setPrefs({ categoriesLayout })} options={LAYOUTS} />
       </div>
+      <BulkStyleButton journal />
       {addButton}
     </>
   )
@@ -63,7 +66,17 @@ export function CategoriesPage() {
         {journal ? (
           <JournalTitle icon="🗂️" tab="mon organisation" title="Catégories" description={description} actions={actions} />
         ) : (
-          <PageHeader icon="🗂️" title="Catégories" description={description} actions={addButton} />
+          <PageHeader
+            icon="🗂️"
+            title="Catégories"
+            description={description}
+            actions={
+              <div className="flex items-center gap-2">
+                <BulkStyleButton />
+                {addButton}
+              </div>
+            }
+          />
         )}
         {layout === 'notion' && <NotionLayout real={real} other={other} />}
         {layout === 'soft' && <SoftLayout real={real} other={other} onAddCategory={addCategory} />}
@@ -72,3 +85,50 @@ export function CategoriesPage() {
     </div>
   )
 }
+
+/**
+ * Change d'un coup la présentation de la couleur (label / fond / bordure) de toutes les catégories
+ * et sous-catégories, donc de toutes les tâches. Chaque élément garde sa couleur ; « Annuler » revient en arrière.
+ */
+function BulkStyleButton({ journal }: { journal?: boolean }) {
+  const categories = useApp((s) => s.data.categories)
+  const subcategories = useApp((s) => s.data.subcategories)
+  const items = [...categories, ...subcategories]
+  const [open, setOpen] = useState(false)
+  // La présentation commune actuelle, s'il y en a une (sinon aucun bouton n'est actif).
+  const shared = items.length > 0 && items.every((i) => i.styleTarget === items[0].styleTarget) ? items[0].styleTarget : undefined
+  const apply = (target: StyleTarget) => {
+    setOpen(false)
+    withUndo(`Style « ${TARGET_LABEL[target]} » appliqué à toutes les catégories`, () => useApp.getState().setAllStyleTargets(target))
+  }
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={setOpen}
+      align="end"
+      className={journal ? cn(journalMenuClass, 'p-1') : undefined}
+      trigger={
+        journal ? (
+          <button
+            type="button"
+            className="flex h-8 items-center gap-1.5 rounded-full border-2 border-[#A3A8EE] bg-[#F4F3FF] px-3 font-plate text-[13px] font-semibold text-[#2F2B6E] shadow-[0_3px_0_#DCDDFF] transition-colors hover:bg-[#DCDDFF]"
+          >
+            <Paintbrush size={14} /> Style des tâches
+          </button>
+        ) : (
+          <Button variant="outline">
+            <Paintbrush size={14} /> Style des tâches
+          </Button>
+        )
+      }
+    >
+      <div className="w-[260px] p-2">
+        <p className={cn('mb-2.5 text-xs', journal ? 'text-[#5B57A6]' : 'text-ink-3')}>Toutes les catégories et sous-catégories gardent leur couleur, appliquée de la même façon à leurs tâches.</p>
+        <StyleTargetChoice color={journal ? '#8C92E8' : '#337EA9'} target={shared} onChange={apply} title="Appliquer la couleur au…" />
+      </div>
+    </Popover>
+  )
+}
+
+const TARGET_LABEL: Record<StyleTarget, string> = { label: 'Label', background: 'Fond', border: 'Bordure' }

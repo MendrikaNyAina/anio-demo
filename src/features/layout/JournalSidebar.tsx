@@ -1,9 +1,11 @@
-import { CalendarDays, ChartColumn, ChevronsLeft, ChevronsUpDown, Folder, Settings, Smile, Sparkles } from 'lucide-react'
+import { CalendarDays, ChartColumn, ChevronsLeft, ChevronsUpDown, Folder, Ghost, Settings, Smile, Sparkles, Timer, Trash2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router'
 import type { useActionMenu } from '@/components/ui/menu'
 import { cn } from '@/lib/utils'
+import { useApp } from '@/store/appStore'
 import { NotionSourcesList } from '@/features/notion/NotionSourcesList'
+import { PomodoroBadge } from '@/features/pomodoro/PomodoroBadge'
 
 // Menu latéral du thème journal (maquette « Menu latéral — journal ») : une page de carnet sur papier
 // quadrillé lavande, reliée par une spirale sur le bord droit. La page active est une étiquette posée de travers.
@@ -29,6 +31,7 @@ export function JournalSidebar({
   onClose: () => void
 }) {
   const inBilan = useLocation().pathname.startsWith('/bilan')
+  const trashCount = useApp((s) => s.data.trash.length)
   return (
     <div className="relative h-full w-[280px] font-plate text-[#2F2B6E]">
       <div
@@ -94,6 +97,7 @@ export function JournalSidebar({
             <SubItem to="/calendar/month">Mois</SubItem>
             <SubItem to="/calendar/week">Semaine</SubItem>
             <SubItem to="/calendar/day">Jour</SubItem>
+            <SubItem to="/calendar/matrix">Matrice</SubItem>
           </div>
           <Item to="/bilan" icon={<ChartColumn />} active={inBilan}>
             Bilan
@@ -103,11 +107,22 @@ export function JournalSidebar({
             <SubItem to="/bilan">Aujourd'hui</SubItem>
             <SubItem to="/bilan/habits">Habitudes</SubItem>
           </div>
+          <Item to="/pomodoro" icon={<Timer />}>
+            Pomodoro
+            <PomodoroBadge journal />
+          </Item>
+          <Item to="/mascot" icon={<Ghost />}>
+            Mascotte
+          </Item>
           <Item to="/settings" icon={<Settings />}>
             Paramètres
           </Item>
           <Item to="/icons" icon={<Smile />}>
             Icônes
+          </Item>
+          <Item to="/trash" icon={<Trash2 />}>
+            Poubelle
+            {trashCount > 0 && <span className="ml-auto pr-1 text-xs font-medium text-[#6E6BC4]">{trashCount}</span>}
           </Item>
         </nav>
 

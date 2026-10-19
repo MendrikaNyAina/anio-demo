@@ -8,7 +8,10 @@ import { EventsPage } from '@/features/events/EventsPage'
 import { HabitsPage } from '@/features/habits/HabitsPage'
 import { IconsPage } from '@/features/icons/IconsPage'
 import { AppShell } from '@/features/layout/AppShell'
+import { MascotPage } from '@/features/mascot/MascotPage'
+import { PomodoroPage } from '@/features/pomodoro/PomodoroPage'
 import { SettingsPage } from '@/features/settings/SettingsPage'
+import { TrashPage } from '@/features/trash/TrashPage'
 
 const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -25,6 +28,9 @@ const router = createBrowserRouter([
       { path: 'habits', element: <Navigate to="/bilan/habits" replace /> },
       { path: 'settings', element: <SettingsPage /> },
       { path: 'icons', element: <IconsPage /> },
+      { path: 'pomodoro', element: <PomodoroPage /> },
+      { path: 'mascot', element: <MascotPage /> },
+      { path: 'trash', element: <TrashPage /> },
       { path: '*', element: <Navigate to="/calendar/week" replace /> },
     ],
   },

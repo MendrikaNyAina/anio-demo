@@ -31,7 +31,7 @@ export function deleteEntry(entry: Entry) {
   if (!entry.taskId) return
   if (entry.type === 'spread') return ui.set({ deleteChoice: { taskId: entry.taskId, slotId: entry.slotId } })
   if (entry.type === 'habit') return ui.set({ deleteChoice: { taskId: entry.taskId, date: toKey(new Date()) } })
-  withUndo('Tâche supprimée', () => app().deleteTask(entry.taskId!))
+  withUndo('Tâche mise à la poubelle', () => app().deleteTask(entry.taskId!))
 }
 
 export function entryMenuItems(entry: Entry): MenuItem[] {

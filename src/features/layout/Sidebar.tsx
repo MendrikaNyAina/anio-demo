@@ -1,4 +1,4 @@
-import { CalendarDays, ChartColumn, ChevronsLeft, ChevronsUpDown, Folder, LogOut, RotateCcw, Settings, Smile, Sparkles } from 'lucide-react'
+import { CalendarDays, ChartColumn, ChevronsLeft, ChevronsUpDown, Folder, Ghost, LogOut, RotateCcw, Settings, Smile, Sparkles, Timer, Trash2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router'
 import { useActionMenu } from '@/components/ui/menu'
@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { useApp, useTheme } from '@/store/appStore'
 import { ui } from '@/store/uiStore'
 import { NotionSourcesList } from '@/features/notion/NotionSourcesList'
+import { PomodoroBadge } from '@/features/pomodoro/PomodoroBadge'
 import { JournalSidebar } from './JournalSidebar'
 
 /**
@@ -14,6 +15,7 @@ import { JournalSidebar } from './JournalSidebar'
  */
 export function Sidebar({ open, onClose, overlay }: { open: boolean; onClose: () => void; overlay: boolean }) {
   const session = useApp((s) => s.session)
+  const trashCount = useApp((s) => s.data.trash.length)
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const inCalendar = pathname.startsWith('/calendar')
@@ -91,6 +93,9 @@ export function Sidebar({ open, onClose, overlay }: { open: boolean; onClose: ()
             <Item to="/calendar/day" small>
               Jour
             </Item>
+            <Item to="/calendar/matrix" small>
+              Matrice
+            </Item>
           </div>
           <Item to="/bilan" icon={<ChartColumn />} active={inBilan}>
             Bilan
@@ -103,11 +108,22 @@ export function Sidebar({ open, onClose, overlay }: { open: boolean; onClose: ()
               Habitudes
             </Item>
           </div>
+          <Item to="/pomodoro" icon={<Timer />}>
+            Pomodoro
+            <PomodoroBadge />
+          </Item>
+          <Item to="/mascot" icon={<Ghost />}>
+            Mascotte
+          </Item>
           <Item to="/settings" icon={<Settings />}>
             Paramètres
           </Item>
           <Item to="/icons" icon={<Smile />}>
             Icônes
+          </Item>
+          <Item to="/trash" icon={<Trash2 />}>
+            Poubelle
+            {trashCount > 0 && <span className="ml-auto text-xs font-normal text-ink-3">{trashCount}</span>}
           </Item>
         </nav>
 
