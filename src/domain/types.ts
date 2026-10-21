@@ -96,11 +96,28 @@ export interface Task {
   source?: { kind: 'notion'; sourceId: ID }
 }
 
+/** Répétition d'un événement : jamais, ou chaque semaine / mois / année à partir de son créneau. */
+export type EventRepeat = 'none' | 'weekly' | 'monthly' | 'yearly'
+
 export interface CalendarEvent {
   id: ID
   title: string
   color: string
+  /** Premier créneau. S'il se répète, les suivants sont calculés (`expandEvent`), jamais stockés. */
   slot: Slot
+  /** Absent = `none`. */
+  repeat?: EventRepeat
+  /** Bornes facultatives de la répétition, incluses. Sans début : dès le créneau ; sans fin : pour toujours. */
+  repeatStart?: DateKey
+  repeatEnd?: DateKey
+}
+
+/** Modèle d'événement : un nom, une couleur et une répétition appliqués d'un clic dans le formulaire. */
+export interface EventTemplate {
+  id: ID
+  name: string
+  color: string
+  repeat: EventRepeat
 }
 
 export interface IconAsset {
@@ -209,6 +226,7 @@ export interface DataState {
   subcategories: Subcategory[]
   tasks: Task[]
   events: CalendarEvent[]
+  eventTemplates: EventTemplate[]
   icons: IconAsset[]
   notionSources: NotionSource[]
   views: CalendarView[]
@@ -218,6 +236,14 @@ export interface DataState {
 }
 
 export const DEFAULT_EISENHOWER_COLORS: Record<Quadrant, string> = { q1: '#D44C47', q2: '#337EA9', q3: '#D9730D', q4: '#787774' }
+
+/** Modèles proposés au premier lancement. Ce sont des données comme les autres : on peut les supprimer. */
+export const DEFAULT_EVENT_TEMPLATES: EventTemplate[] = [
+  { id: 'tpl-birthday', name: 'Anniversaire', color: '#337EA9', repeat: 'yearly' },
+  { id: 'tpl-family', name: 'Réunion de famille', color: '#CB912F', repeat: 'none' },
+  { id: 'tpl-rent', name: 'Loyer', color: '#D9730D', repeat: 'monthly' },
+  { id: 'tpl-class', name: 'Cours', color: '#448361', repeat: 'weekly' },
+]
 
 export const DEFAULT_POMODORO: PomodoroSettings = { workMin: 25, shortBreakMin: 5, longBreakMin: 15, cyclesBeforeLong: 4, sound: true }
 

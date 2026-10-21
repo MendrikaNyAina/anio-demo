@@ -9,6 +9,7 @@ import { normalizeLinks } from '@/domain/grouping'
 import { keepRecent } from '@/domain/trash'
 import {
   DEFAULT_EISENHOWER_COLORS,
+  DEFAULT_EVENT_TEMPLATES,
   DEFAULT_MASCOT_LINES,
   DEFAULT_POMODORO,
   EMPTY_FILTERS,
@@ -18,6 +19,7 @@ import {
   type Category,
   type DataState,
   type DateKey,
+  type EventTemplate,
   type ID,
   type Occurrence,
   type Settings,
@@ -100,6 +102,8 @@ interface AppState {
   createEvent(event: Omit<CalendarEvent, 'id'>): ID
   updateEvent(id: ID, patch: Partial<CalendarEvent>): void
   deleteEvent(id: ID): void
+  createEventTemplate(template: Omit<EventTemplate, 'id'>): ID
+  deleteEventTemplate(id: ID): void
 
   addIcon(name: string, dataUrl: string): ID
   renameIcon(id: ID, name: string): void
@@ -530,6 +534,15 @@ export const useApp = create<AppState>()(
           set((s) => {
             s.data.events = s.data.events.filter((e) => e.id !== id)
           }),
+        createEventTemplate: (template) => {
+          const id = newId()
+          set((s) => void s.data.eventTemplates.push({ ...template, id }))
+          return id
+        },
+        deleteEventTemplate: (id) =>
+          set((s) => {
+            s.data.eventTemplates = s.data.eventTemplates.filter((t) => t.id !== id)
+          }),
 
         // ── Icônes ────────────────────────────────────────────────
         addIcon: (name, dataUrl) => {
@@ -618,12 +631,14 @@ export const useApp = create<AppState>()(
     }),
     {
       name: 'mon-calendrier-demo',
-      version: 6,
+      version: 7,
       // v2 : style des barres de progression. v3 : thème. v4 : un créneau de tâche tient sur un seul jour.
       // v5 : poubelle, pomodoro, mascotte, couleurs d'Eisenhower, créneaux cochés.
       // v6 : l'importance n'est plus un champ, elle vient de la priorité.
+      // v7 : modèles d'événements (les événements existants restent sans répétition).
       migrate: (persisted, version) => {
         const state = persisted as { data?: Partial<DataState> & { settings?: Partial<Settings>; tasks?: Task[] } }
+        if (version < 7 && state?.data) state.data.eventTemplates ??= structuredClone(DEFAULT_EVENT_TEMPLATES)
         if (version < 6) {
           for (const task of (state?.data?.tasks ?? []) as (Task & { important?: boolean })[]) {
             if (task.important !== undefined && task.priority === undefined) task.priority = task.important ? 'high' : 'low'

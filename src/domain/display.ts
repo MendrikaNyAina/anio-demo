@@ -1,7 +1,7 @@
 import { differenceInCalendarDays, format, isSameDay } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { fromKey, slotBounds } from './dates'
-import type { DateKey, Priority, Slot, Task, TaskKind } from './types'
+import type { CalendarEvent, DateKey, EventRepeat, Priority, Slot, Task, TaskKind } from './types'
 
 const f = (d: Date, pattern: string) => format(d, pattern, { locale: fr })
 
@@ -77,6 +77,21 @@ export const KIND_LABEL: Record<TaskKind | 'event', string> = {
   spread: 'Tâche étalée',
   habit: 'Habitude',
   event: 'Événement',
+}
+
+export const REPEAT_LABEL: Record<EventRepeat, string> = { none: 'Jamais', weekly: 'Semaine', monthly: 'Mois', yearly: 'Année' }
+
+/**
+ * « Chaque lundi », « Le 14 de chaque mois », « Chaque 14 octobre, jusqu'au 3 mars 2027 » ;
+ * vide si l'événement ne se répète pas.
+ */
+export function fmtRepeat({ slot, repeat = 'none', repeatStart, repeatEnd }: Pick<CalendarEvent, 'slot' | 'repeat' | 'repeatStart' | 'repeatEnd'>): string {
+  if (repeat === 'none') return ''
+  const start = slotBounds(slot).start
+  const rule = repeat === 'weekly' ? `Chaque ${f(start, 'EEEE')}` : repeat === 'monthly' ? `Le ${f(start, 'd')} de chaque mois` : `Chaque ${f(start, 'd MMMM')}`
+  const year = (key: DateKey) => f(fromKey(key), 'd MMM yyyy')
+  const bounds = [repeatStart && `à partir du ${year(repeatStart)}`, repeatEnd && `jusqu'au ${year(repeatEnd)}`].filter(Boolean)
+  return bounds.length ? `${rule}, ${bounds.join(' ')}` : rule
 }
 
 export const PRIORITY_LABEL: Record<Priority, string> = { high: 'Haute', medium: 'Moyenne', low: 'Basse' }

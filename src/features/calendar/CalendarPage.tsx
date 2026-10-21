@@ -28,8 +28,9 @@ import { clampToDay, isSingleDay, toKey, type Range } from '@/domain/dates'
 import { buildEntries, type Entry } from '@/domain/entries'
 import type { CalendarMode, Slot } from '@/domain/types'
 import { cn, newId } from '@/lib/utils'
-import { activeView, useApp, useTheme } from '@/store/appStore'
-import { openEntry } from '@/store/entryActions'
+import { canDragOccurrence, moveSeries } from '@/domain/events'
+import { activeView, useApp, useTheme, withUndo } from '@/store/appStore'
+import { explainRepeatingMove, openEntry } from '@/store/entryActions'
 import { ui, useUi } from '@/store/uiStore'
 import type { DragPayload } from './DraggableEntry'
 import { FiltersBar } from './FiltersBar'
@@ -96,9 +97,24 @@ function CalendarScreen({ mode }: { mode: CalendarMode }) {
   const api = () => calendarRef.current?.getApi()
 
   // ── Déplacements ─────────────────────────────────────────────
+  /**
+   * Événement répété chaque mois / année : toute la série prend le décalage de l'occurrence glissée.
+   * Chaque semaine : l'occurrence revient à sa place sous les yeux, avec l'explication.
+   */
+  const moveEvent = (eventId: string, occurrenceStart: Date, moved: Slot, revert?: () => void) => {
+    const event = data.events.find((e) => e.id === eventId)
+    if (!event) return
+    if ((event.repeat ?? 'none') === 'none') return app.updateEvent(eventId, { slot: moved })
+    if (!canDragOccurrence(event.repeat)) {
+      revert?.()
+      return explainRepeatingMove(eventId)
+    }
+    withUndo('Toutes les répétitions ont été déplacées', () => app.updateEvent(eventId, { slot: moveSeries(event, occurrenceStart, moved) }))
+  }
+
   /** Applique un déplacement / redimensionnement à la donnée sous-jacente de l'entrée. */
   const moveEntry = (entry: Entry, start: Date, end: Date | null, allDay: boolean, revert?: () => void) => {
-    if (entry.eventId) return app.updateEvent(entry.eventId, { slot: slotAt(entry.eventId, start, end, allDay, defaultMinutes) })
+    if (entry.eventId) return moveEvent(entry.eventId, entry.start, slotAt(entry.eventId, start, end, allDay, defaultMinutes), revert)
     if (!entry.taskId) return
     if (entry.type === 'habit' && entry.occurrenceDate) {
       // Une occurrence déplacée devient une exception pour ce jour-là.
@@ -131,7 +147,7 @@ function CalendarScreen({ mode }: { mode: CalendarMode }) {
     const payload = JSON.parse(info.draggedEl.dataset.drag ?? '{}') as DragPayload
     const start = info.date
     const end = info.allDay ? null : addMinutes(start, payload.minutes)
-    if (payload.eventId) return app.updateEvent(payload.eventId, { slot: slotAt(payload.eventId, start, end, info.allDay, defaultMinutes) })
+    if (payload.eventId) return moveEvent(payload.eventId, new Date(payload.eventStart!), slotAt(payload.eventId, start, end, info.allDay, defaultMinutes))
     if (!payload.taskId) return
     if (payload.date) {
       if (info.allDay) return

@@ -1,4 +1,5 @@
 import { addDays } from 'date-fns'
+import { expandEvent } from './events'
 import { expandHabit } from './habits'
 import { buildLookup, type Lookup } from './lookup'
 import { minutesBetween, overlaps, slotBounds, toKey, type Range } from './dates'
@@ -110,20 +111,22 @@ export function buildEntries(data: DataState, options: BuildOptions): Entry[] {
   if (!respectSwitches || data.settings.showPlatformTasks) {
     for (const ev of data.events) {
       if (filters && !passesKind('event', filters)) continue
-      const bounds = slotBounds(ev.slot)
-      if (!overlaps(bounds, range)) continue
-      out.push({
-        key: `ev::${ev.id}`,
-        type: 'event',
-        title: ev.title,
-        start: bounds.start,
-        end: bounds.end,
-        allDay: ev.slot.allDay,
-        style: null,
-        eventColor: ev.color,
-        weight: ev.slot.allDay ? defaultDuration : minutesBetween(bounds.start, bounds.end),
-        eventId: ev.id,
-      })
+      const repeating = (ev.repeat ?? 'none') !== 'none'
+      for (const slot of expandEvent(ev, range)) {
+        const bounds = slotBounds(slot)
+        out.push({
+          key: repeating ? `ev::${ev.id}::${toKey(bounds.start)}` : `ev::${ev.id}`,
+          type: 'event',
+          title: ev.title,
+          start: bounds.start,
+          end: bounds.end,
+          allDay: slot.allDay,
+          style: null,
+          eventColor: ev.color,
+          weight: slot.allDay ? defaultDuration : minutesBetween(bounds.start, bounds.end),
+          eventId: ev.id,
+        })
+      }
     }
   }
 

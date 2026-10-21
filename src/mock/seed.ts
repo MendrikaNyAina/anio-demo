@@ -2,6 +2,7 @@ import { addDays, startOfMonth, startOfWeek, subMinutes } from 'date-fns'
 import { atTime, fromKey, isoDay, toKey } from '@/domain/dates'
 import {
   DEFAULT_EISENHOWER_COLORS,
+  DEFAULT_EVENT_TEMPLATES,
   DEFAULT_MASCOT_LINES,
   DEFAULT_POMODORO,
   EMPTY_FILTERS,
@@ -248,14 +249,14 @@ export function createSeed(now = new Date()): DataState {
     if (t.kind === 'spread') for (const s of t.slots) s.done = true
   }
 
-  const event = (title: string, color: string, slot: Slot): CalendarEvent => ({ id: newId(), title, color, slot })
+  const event = (title: string, color: string, slot: Slot, repeat?: CalendarEvent['repeat']): CalendarEvent => ({ id: newId(), title, color, slot, repeat })
   const events: CalendarEvent[] = [
     event('Atelier aquarelle', '#9065B0', timed(-7, '18:00', '20:00')),
     event('Dentiste', '#D44C47', timed(2, '10:00', '10:45')),
-    event('Anniversaire de Hery', '#CB912F', allDay(3)),
+    event('Anniversaire de Hery', '#337EA9', allDay(3), 'yearly'),
     event('Réunion client', '#337EA9', timed(3, '14:00', '15:00')),
     event('Salon BD', '#9065B0', allDay(5)),
-    event('Appel famille', '#448361', timed(6, '18:00', '19:00')),
+    event('Appel famille', '#CB912F', timed(6, '18:00', '19:00'), 'weekly'),
     event('Concert', '#C14C8A', timed(11, '20:00', '23:00')),
   ]
 
@@ -276,6 +277,7 @@ export function createSeed(now = new Date()): DataState {
     subcategories: [portfolio, shifterra, ikaly, painting, croquis, sport, maison],
     tasks,
     events,
+    eventTemplates: structuredClone(DEFAULT_EVENT_TEMPLATES),
     icons,
     notionSources: [{ id: lectures.id, name: lectures.name, icon: lectures.icon, showInCalendar: true }],
     views: [

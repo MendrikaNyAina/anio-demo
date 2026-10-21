@@ -1,6 +1,8 @@
 import { CheckSquare, ExternalLink, Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { toKey } from '@/domain/dates'
 import type { Entry } from '@/domain/entries'
+import type { ID } from '@/domain/types'
 import type { MenuItem } from '@/components/ui/menu'
 import { useApp, withUndo } from './appStore'
 import { ui } from './uiStore'
@@ -18,8 +20,23 @@ export function toggleEntryDone(entry: Entry) {
 
 export function openEntry(entry: Entry) {
   if (entry.taskId) return ui.openPeek(entry.taskId)
-  const event = app().data.events.find((e) => e.id === entry.eventId)
-  if (event) ui.openEventForm({ mode: 'edit', eventId: event.id, draft: structuredClone({ title: event.title, color: event.color, slot: event.slot }) })
+  if (entry.eventId) openEvent(entry.eventId)
+}
+
+function openEvent(id: ID) {
+  const event = app().data.events.find((e) => e.id === id)
+  if (event) ui.editEvent(event)
+}
+
+/**
+ * Une occurrence d'événement répété chaque semaine glissée revient à sa place :
+ * on explique pourquoi, avec un raccourci vers le formulaire.
+ */
+export function explainRepeatingMove(eventId: ID) {
+  toast('Un événement répété chaque semaine ne se déplace pas en le glissant', {
+    description: 'Change sa date dans le formulaire : toutes les répétitions suivent.',
+    action: { label: 'Modifier', onClick: () => openEvent(eventId) },
+  })
 }
 
 /**

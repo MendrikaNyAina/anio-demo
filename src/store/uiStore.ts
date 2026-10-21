@@ -75,6 +75,8 @@ export const ui = {
   confirm: (state: ConfirmState) => useUi.setState({ confirm: state }),
   openTaskForm: (form: TaskFormState) => useUi.setState({ taskForm: form }),
   openEventForm: (form: EventFormState) => useUi.setState({ eventForm: form }),
+  /** Formulaire d'un événement existant, avec toutes ses propriétés (répétition comprise). */
+  editEvent: ({ id, ...draft }: CalendarEvent) => useUi.setState({ eventForm: { mode: 'edit', eventId: id, draft: structuredClone(draft) } }),
 }
 
 export function emptyDraft(kind: Task['kind'], patch: Partial<TaskDraft> = {}): TaskDraft {

@@ -14,6 +14,8 @@ export interface DragPayload {
   /** Occurrence d'habitude (date de l'occurrence). */
   date?: string
   eventId?: string
+  /** Début de l'occurrence glissée (ISO), pour décaler toute la série d'un événement répété. */
+  eventStart?: string
 }
 
 export function payloadOf(entry: Entry, defaultMinutes: number): DragPayload {
@@ -24,6 +26,7 @@ export function payloadOf(entry: Entry, defaultMinutes: number): DragPayload {
     slotId: entry.slotId,
     date: entry.occurrenceDate,
     eventId: entry.eventId,
+    eventStart: entry.eventId ? entry.start.toISOString() : undefined,
   }
 }
 
